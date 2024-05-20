@@ -1,12 +1,14 @@
 import bcrypt from "bcrypt";
 import { pool } from "../db.js";
 import { createAccessToken } from "../libs/jwt.js";
-import md5 from 'md5';
+import md5 from "md5";
 
 export const signin = async (req, res) => {
   const { email, password } = req.body;
 
-  const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+  const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+    email,
+  ]);
 
   if (result.rowCount === 0) {
     return res.status(400).json({
@@ -48,7 +50,7 @@ export const signup = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const gravatar = `https://www.gravatar.com/avatar/${md5(email)}`;
 
-    // Asignar el rol de USER por defecto (role_id = 3)
+   
     const result = await pool.query(
       "INSERT INTO users(name, email, password, gravatar, role_id) VALUES($1, $2, $3, $4, $5) RETURNING *",
       [name, email, hashedPassword, gravatar, 3]
@@ -78,11 +80,13 @@ export const signup = async (req, res, next) => {
 };
 
 export const signout = (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie("token");
   res.sendStatus(200);
 };
 
 export const profile = async (req, res) => {
-  const result = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+  const result = await pool.query("SELECT * FROM users WHERE id = $1", [
+    req.user.id,
+  ]);
   return res.json(result.rows[0]);
 };
