@@ -1,88 +1,93 @@
 import { pool } from "../db.js";
 
+// Obtener todos los pacientes
 export const getAllPatients = async (req, res, next) => {
-  if (req.role !== 'VETERINARIO') {
-    return res.status(403).json({ message: "No autorizado" });
-  }
-
-  const result = await pool.query("SELECT * FROM patients WHERE user_id = $1", [
-    req.userId,
-  ]);
-  return res.json(result.rows);
-};
-
-export const getPatient = async (req, res) => {
-  if (req.role !== 'VETERINARIO') {
-    return res.status(403).json({ message: "No autorizado" });
-  }
-
-  const result = await pool.query("SELECT * FROM patients WHERE id = $1", [
-    req.params.id,
-  ]);
-
-  if (result.rowCount === 0) {
-    return res.status(404).json({
-      message: "No existe un paciente con ese id",
-    });
-  }
-
-  return res.json(result.rows[0]);
-};
-
-export const createPatient = async (req, res, next) => {
-  const { name, breed, species, weight } = req.body;
-
   try {
-    const result = await pool.query(
-      "INSERT INTO patients(name, breed, species, weight) VALUES ($1, $2, $3, $4) RETURNING *",
-      [name, breed, species, weight]
-    );
-
-    res.json(result.rows[0]);   
-  } catch (error) {
-    if (error.code === "23505") {
-      return res.status(409).json({
-        message: "Ya existe un paciente con ese id",
-      });
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
     }
+
+    const result = await pool.query("SELECT id, name, breed, species, weight, client_id FROM patients");
+
+    res.json(result.rows);
+  } catch (error) {
     next(error);
   }
 };
-export const updatePatient = async (req, res) => {
-  if (req.role !== 'VETERINARIO') {
-    return res.status(403).json({ message: "No autorizado" });
+
+// Obtener un paciente específico
+export const getPatientById = async (req, res, next) => {
+  try {
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
+    }
+
+    const { patientId } = req.params;
+    const result = await pool.query("SELECT id, name, breed, species, weight, client_id FROM patients WHERE id = $1", [patientId]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'Paciente no encontrado' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    next(error);
   }
-
-  const id = req.params.id;
-  const { name, breed, species, weight } = req.body;
-
-  const result = await pool.query(
-    "UPDATE patients SET name= $1, breed = $2, species = $3, weight = $4 WHERE id = $5 RETURNING *",
-    [name, breed, species, weight, id]
-  );
-
-  if (result.rowCount === 0) {
-    return res.status(404).json({
-      message: "No existe un paciente con ese id",
-    });
-  }
-
-  return res.json(result.rows[0]);
 };
 
-export const deletePatient = async (req, res) => {
-  if (req.role !== 'VETERINARIO') {
-    return res.status(403).json({ message: "No autorizado" });
-  }
+// Crear un nuevo paciente
+export const createPatient = async (req, res, next) => {
+  try {
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
+    }
 
-  const result = await pool.query("DELETE FROM patients WHERE id = $1", [
-    req.params.id,
-  ]);
+    const { name, breed, species, weight, client_id } = req.body;
 
-  if (result.rowCount === 0) {
-    return res.status(404).json({
-      message: "No existe una tarea con ese id",
-    });
+    const result = await pool.query(
+      "INSERT INTO patients (name, breed, species, weight, client_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [name, breed, species, weight, client_id]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    next(error);
   }
-  return res.sendStatus(204);
+};
+
+// Actualizar información de un paciente
+export const updatePatient = async (req, res, next) => {
+  try {
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
+    }
+
+    const { patientId, name, breed, species, weight, client_id } = req.body;
+
+    await pool.query(
+      "UPDATE patients SET name = $1, breed = $2, species = $3, weight = $4, client_id = $5 WHERE id = $6",
+      [name, breed, species, weight, client_id, patientId]
+    );
+
+    res.json({ message: 'Paciente actualizado exitosamente.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Eliminar un paciente
+export const deletePatient = async (req, res, next) => {
+  try {
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
+    }
+
+    const { patientId } = req.params;
+
+    await pool.query("DELETE FROM patients WHERE id = $1", [patientId]);
+
+    res.json({ message: 'Paciente eliminado exitosamente.' });
+  } catch (error) {
+    next(error);
+  }
 };

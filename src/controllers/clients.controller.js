@@ -1,94 +1,93 @@
 import { pool } from "../db.js";
 
+// Obtener todos los clientes
 export const getAllClients = async (req, res, next) => {
-  if (req.role !== 'VETERINARIO') {
-    return res.status(403).json({ message: "No autorizado" });
-  }
-
-  const result = await pool.query("SELECT * FROM clients WHERE user_id = $1", [
-    req.userId,
-  ]);
-  return res.json(result.rows);
-};
-
-export const getClient = async (req, res) => {
-  if (req.role !== 'VETERINARIO') {
-    return res.status(403).json({ message: "No autorizado" });
-  }
-
-  const result = await pool.query("SELECT * FROM clients WHERE id = $1", [
-    req.params.id,
-  ]);
-
-  if (result.rowCount === 0) {
-    return res.status(404).json({
-      message: "No existe un cliente con ese id",
-    });
-  }
-
-  return res.json(result.rows[0]);
-};
-
-export const createClient = async (req, res, next) => {
-  if (req.role !== 'VETERINARIO') {
-    return res.status(403).json({ message: "No autorizado" });
-  }
-
-  const { cedula, full_name, phone, address, email } = req.body;
-
   try {
-    const result = await pool.query(
-      "INSERT INTO clients(cedula, full_name, phone, address, email) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [cedula, full_name, phone, address, email]
-    );
-
-    res.json(result.rows[0]);   
-  } catch (error) {
-    if (error.code === "23505") {
-      return res.status(409).json({
-        message: "Ya existe este cliente",
-      });
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
     }
+
+    const result = await pool.query("SELECT id, full_name, email, phone, cedula FROM clients");
+
+    res.json(result.rows);
+  } catch (error) {
     next(error);
   }
 };
-export const updateClient = async (req, res) => {
-  if (req.role !== 'VETERINARIO') {
-    return res.status(403).json({ message: "No autorizado" });
+
+// Obtener un cliente específico
+export const getClientById = async (req, res, next) => {
+  try {
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
+    }
+
+    const { clientId } = req.params;
+    const result = await pool.query("SELECT id, full_name, email, phone, cedula FROM clients WHERE id = $1", [clientId]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'Cliente no encontrado' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    next(error);
   }
-
-  const { id } = req.params;
-  const { cedula, full_name, phone, address, email } = req.body;
-
-  const result = await pool.query(
-    "UPDATE clients SET cedula = $1, full_name = $2, phone = $3, address = $4, email = $5 WHERE id = $6 RETURNING *",
-    [cedula, full_name, phone, address, email, id]
-  );
-
-  if (result.rowCount === 0) {
-    return res.status(404).json({
-      message: "No existe un cliente con ese id",
-    });
-  }
-
-  return res.json(result.rows[0]);
 };
 
+// Crear un nuevo cliente
+export const createClient = async (req, res, next) => {
+  try {
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
+    }
 
+    const { cedula, full_name, email, phone} = req.body;
 
-export const deleteClient = async (req, res) => {
-  if (req.role !== 'VETERINARIO') {
-    return res.status(403).json({ message: "No autorizado" });
+    const result = await pool.query(
+      "INSERT INTO clients (cedula, full_name, email, phone) VALUES ($1, $2, $3, $4) RETURNING *",
+      [cedula, full_name, email, phone]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    next(error);
   }
+};
 
-  const result = await pool.query("DELETE FROM clients WHERE id = $1", [
-    req.params.id,
-  ]);
+// Actualizar información de un cliente
+export const updateClient = async (req, res, next) => {
+  try {
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
+    }
 
-  if (result.rowCount === 0) {
-    return res.status(404).json({
-      message: "No existe un cliente con ese id",
-    });
+    const { clientId, full_name, email, phone, cedula } = req.body;
+
+    await pool.query(
+      "UPDATE clients SET full_name = $1, email = $2, phone = $3, cedula = $4 WHERE id = $5",
+      [full_name, email, phone, cedula, clientId]
+    );
+
+    res.json({ message: 'Cliente actualizado exitosamente.' });
+  } catch (error) {
+    next(error);
   }
-  return res.sendStatus(204);
+};
+
+// Eliminar un cliente
+export const deleteClient = async (req, res, next) => {
+  try {
+    if (req.user.role_id !== 2) {
+      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
+    }
+
+    const { clientId } = req.params;
+
+    await pool.query("DELETE FROM clients WHERE id = $1", [clientId]);
+
+    res.json({ message: 'Cliente eliminado exitosamente.' });
+  } catch (error) {
+    next(error);
+  }
 };

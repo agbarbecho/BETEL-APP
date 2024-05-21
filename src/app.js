@@ -4,9 +4,10 @@ import cookieParser from "cookie-parser";
 import cors from 'cors';
 
 import authRoutes from "./routes/auth.routes.js";
-import clientRoutes from "./routes/client.routes.js";
+import clientRoutes from "./routes/client.routes.js"; // Importa las rutas de clientes
 import patientRoutes from "./routes/patient.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import { isAuth, isAdmin, isVeterinarian } from "./middlewares/auth.middleware.js";
 
 const app = express();
 
@@ -25,9 +26,9 @@ app.get("/", (req, res) => res.json({ message: "Welcome to my API" }));
 app.use("/api", authRoutes);
 
 // Rutas protegidas
-app.use("/api/admin", adminRoutes);
-app.use("/api/clients", clientRoutes);
-app.use("/api/patients", patientRoutes);
+app.use("/api/admin", isAuth, isAdmin, adminRoutes);
+app.use("/api/veterinario", isAuth, isVeterinarian, clientRoutes, patientRoutes); // Usa las rutas de cliente bajo /api/veterinario
+
 
 // Error Handler
 app.use((err, req, res, next) => {

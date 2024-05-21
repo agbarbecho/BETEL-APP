@@ -1,13 +1,12 @@
 import { createContext, useState, useContext } from "react";
-import { useAuth } from './AuthContext'; // Importa tu contexto de autenticación
 import {
   getAllPatientsRequest,
   deletePatientRequest,
   createPatientRequest,
   getPatientRequest,
   updatePatientRequest
+ 
 } from "../api/patients.api";
-
 const PatientContext = createContext();
 
 export const usePatients = () => {
@@ -19,53 +18,52 @@ export const usePatients = () => {
 };
 
 export const PatientProvider = ({ children }) => {
-  const { role } = useAuth(); // Obtiene el rol del contexto de autenticación
   const [patients, setPatients] = useState([]);
   const [errors, setErrors] = useState([]);
-
+  
+  
   const loadPatients = async () => {
-    if (role === 'user') { // Si el rol es 'user', no hace nada
-      return;
-    }
-
     const res = await getAllPatientsRequest();
     setPatients(res.data);
   };
 
-  const deletePatient = async (id) => {
-    try {
-      await deletePatientRequest(id);
-      loadPatients(); // Recarga los pacientes después de eliminar uno
-    } catch (error) {
-      setErrors(prevErrors => [...prevErrors, error]);
-    }
-  };
 
-  const createPatient = async (patientData) => {
-    try {
-      await createPatientRequest(patientData);
-      loadPatients(); // Recarga los pacientes después de crear uno
-    } catch (error) {
-      setErrors(prevErrors => [...prevErrors, error]);
-    }
-  };
+const loadPatient = async id => {
+const res = await getPatientRequest(id); 
+return res.data; 
+}
 
-  const loadPatient = async (id) => {
+
+  const createPatient = async (patient) => {
     try {
-      const res = await getPatientRequest(id);
+      const res = await createPatientRequest(patient);
+      setPatients([...patients, res.data]);
       return res.data;
     } catch (error) {
-      setErrors(prevErrors => [...prevErrors, error]);
+      if (error.response) {
+        setErrors([error.response.data.message]);
+      }
     }
   };
 
-  const updatePatient = async (id, updatedData) => {
-    try {
-      await updatePatientRequest(id, updatedData);
-      loadPatients(); // Recarga los pacientes después de actualizar uno
-    } catch (error) {
-      setErrors(prevErrors => [...prevErrors, error]);
+  //BORRAR
+  const deletePatient = async (id) => {
+    const res = await deletePatientRequest(id);
+    if (res.status === 204) {
+      setPatients(patients.filter((patient) => patient.id !== id));
     }
+  };
+
+  const updatePatient = async (id, patient) => {
+    try {
+      const res =  await updatePatientRequest(id, patient);
+      return res.data;
+    } catch (error) {
+        if (error.response) {
+          setErrors([error.response.data.message]);
+        }
+    }
+
   };
 
   return (

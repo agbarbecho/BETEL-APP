@@ -16,13 +16,12 @@ import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 function App() {
-  const { isAuth,isAdmin,isVeterinario, loading  } = useAuth();
+  const { isAuth, loading  } = useAuth();
   console.log(loading)
 
   if (loading) return <h1>
     Cargando ... 
     </h1>
-
 
   return (
     <>
@@ -40,15 +39,14 @@ function App() {
           </Route>
 
           <Route
-            element={<ProtectedRoute isAllowed={isAuth, isAdmin, isVeterinario} redirectTo="/login" />}
+            element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}
           >
             <Route
               element={
                 <PatientProvider>
                   <Outlet />
                 </PatientProvider>
-              }
-              >
+              }>
               <Route path="/patients" element={<PatientsPage />} />
               <Route path="/patients/new" element={<PatientFormPage />} />
               <Route path="/patients/:id/edit" element={<PatientFormPage />} />

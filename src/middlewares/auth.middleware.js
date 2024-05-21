@@ -23,14 +23,18 @@ export const isAuth = (req, res, next) => {
 
 export const isAdmin = (req, res, next) => {
   if (req.user.role_id !== 1) {
-    return res.status(403).json({ message: 'Acceso denegado. No eres un administrador.' });
+    return res
+      .status(403)
+      .json({ message: "Acceso denegado. No eres un administrador." });
   }
   next();
 };
 
 export const isVeterinarian = (req, res, next) => {
   if (req.user.role_id !== 2) {
-    return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
+    return res
+      .status(403)
+      .json({ message: "Acceso denegado. No eres un veterinario." });
   }
   next();
 };
