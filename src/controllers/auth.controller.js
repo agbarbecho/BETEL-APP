@@ -12,7 +12,7 @@ export const signin = async (req, res) => {
 
   if (result.rowCount === 0) {
     return res.status(400).json({
-      message: "El correo no está registrado",
+      message: "El correo no esta registrado",
     });
   }
 
@@ -30,18 +30,15 @@ export const signin = async (req, res) => {
   });
 
   res.cookie("token", token, {
+    // httpOnly: true,
     secure: true,
     sameSite: "none",
-    maxAge: 24 * 60 * 60 * 1000, // 1 día
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
 
-  return res.json({
-    id: result.rows[0].id,
-    name: result.rows[0].name,
-    email: result.rows[0].email,
-    role_id: result.rows[0].role_id,
-  });
+  return res.json(result.rows[0]);
 };
+
 
 export const signup = async (req, res, next) => {
   const { name, email, password } = req.body;

@@ -15,8 +15,8 @@ export const getAllPatients = async (req, res, next) => {
   }
 };
 
-// Obtener un paciente específico
-export const getPatientById = async (req, res, next) => {
+// Obtener un paciente por su ID
+export const getPatient = async (req, res, next) => {
   try {
     if (req.user.role_id !== 2) {
       return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
