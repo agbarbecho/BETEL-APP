@@ -72,14 +72,14 @@ const signout = async () => {
         .then((res) => {
           setUser(res.data);
           setIsAuth(true);
-          setLoading(false);
         })
         .catch((err) => {
           setUser(null);
           setIsAuth(false);
-          setLoading(false);  
+         
         });
     }
+    setLoading(false);
   }, []);
 
   return (
