@@ -15,7 +15,7 @@ export const publicRoutes = [
 export const privateRoutes = [
   {
     name: "Patients",
-    path: "/patients",
+    path: "/veterinario/patients",
   },
   {
     name: "New Patient",

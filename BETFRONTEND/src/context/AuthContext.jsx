@@ -18,24 +18,22 @@ export function AuthProvider({ children }) {
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
-  //Inicio de sesion
   const signin = async (data) => {
     try {
       const res = await axios.post("/signin", data);
       setUser(res.data);
       setIsAuth(true);
+
       return res.data;
     } catch (error) {
       if (Array.isArray(error.response.data)) {
         return setErrors(error.response.data);
       }
+
       setErrors([error.response.data.message]);
     }
   };
 
-
-  //Registro
   const signup = async (data) => {
     try {
       const res = await axios.post("/signup", data);
@@ -48,21 +46,16 @@ export function AuthProvider({ children }) {
       if (Array.isArray(error.response.data)) {
         return setErrors(error.response.data);
       }
+
       setErrors([error.response.data.message]);
     }
   };
 
-//Desconectar
-const signout = async () => {
-  await axios.post("/signout"); 
-  setUser(null);
-  setIsAuth(false);
-}
-
-
-
-
-
+  const signout = async () => {
+    await axios.post("/signout");
+    setUser(null);
+    setIsAuth(false);
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -76,11 +69,19 @@ const signout = async () => {
         .catch((err) => {
           setUser(null);
           setIsAuth(false);
-         
         });
     }
+    
     setLoading(false);
   }, []);
+
+  useEffect(() => {
+    const clean = setTimeout(() => {
+      setErrors(null);      
+    }, 5000);
+
+    return () => clearTimeout(clean);
+  }, [errors])
 
   return (
     <AuthContext.Provider
@@ -91,7 +92,7 @@ const signout = async () => {
         signup,
         signin,
         signout,
-        loading
+        loading,
       }}
     >
       {children}

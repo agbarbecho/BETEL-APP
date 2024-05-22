@@ -7,8 +7,6 @@ import { usePatients } from "../context/PatientContext";
 function PatientFormPage() {
   const { patients, loadPatients, createPatient, updatePatient, loadPatient, errors: patientsErrors } = usePatients();
   const { register, handleSubmit, formState: { errors }, setValue } = useForm();
-  const [isEditing, setIsEditing] = useState(false); // Estado para indicar si estamos editando un paciente
-  const [showForm, setShowForm] = useState(false); // Estado para controlar la visibilidad del formulario
   const params = useParams();
 
   useEffect(() => {
@@ -33,8 +31,6 @@ function PatientFormPage() {
     } else {
       patient = await updatePatient(params.id, data);
     }
-
-    // No se navega automáticamente
   });
 
   const toggleForm = () => {

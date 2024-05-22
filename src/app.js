@@ -27,7 +27,7 @@ app.use("/api", authRoutes);
 
 // Rutas protegidas
 app.use("/api/admin", isAuth, isAdmin, adminRoutes);
-app.use("/api/veterinario", isAuth, isVeterinarian, clientRoutes, patientRoutes); // Usa las rutas de cliente bajo /api/veterinario
+app.use("/api/veterinario", isAuth, isVeterinarian, clientRoutes, patientRoutes); 
 
 
 // Error Handler

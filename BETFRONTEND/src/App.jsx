@@ -16,11 +16,9 @@ import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 function App() {
-  const { isAuth, loading  } = useAuth();
+  const { isAuth, loading } = useAuth();
 
-  if (loading) return <h1>
-    Cargando ... 
-    </h1>
+  if (loading) return <h1>Cargando ...</h1>;
 
   return (
     <>
@@ -28,15 +26,11 @@ function App() {
 
       <Container className="py-5">
         <Routes>
-          <Route
-            element={
-              <ProtectedRoute isAllowed={!isAuth} redirectTo="/patients" />
-            }>
-            <Route path="/" element={<HomePage />} />
+          <Route element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/patients" />}>
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Route>
-
           <Route
             element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}
           >
@@ -45,10 +39,10 @@ function App() {
                 <PatientProvider>
                   <Outlet />
                 </PatientProvider>
-              }>
-              <Route path="/patients" element={<PatientsPage />} />
-              <Route path="/patients/new" element={<PatientFormPage />} />
-              <Route path="/patients/:id/edit" element={<PatientFormPage />} />
+              }
+            >
+              <Route path="/Home" element={<HomePage />} />
+              <Route path="/veterinario/patients" element={<PatientsPage />} />
             </Route>
 
             <Route path="/profile" element={<ProfilePage />} />

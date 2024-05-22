@@ -1,11 +1,16 @@
-import axios from "./axios";
+import client from "./axios";
 
-export const getAllPatientsRequest = () => axios.get('/patients')
+// Obtener todos los pacientes
+export const getAllPatientsRequest = () => client.get('/veterinario/patients');
 
-export const createPatientRequest = (patient) => axios.post('/patients', patient)
+// Crear un nuevo paciente
+export const createPatientRequest = (patient) => client.post('/veterinario/patients', patient);
 
-export const deletePatientRequest = (id) => axios.delete(`/patients/${id}`)
+// Eliminar un paciente por ID
+export const deletePatientRequest = (id) => client.delete(`/veterinario/patients/${id}`);
 
-export const getPatientRequest = id => axios.get(`/patients/${id}`)
+// Obtener un paciente por ID
+export const getPatientRequest = (id) => client.get(`/veterinario/patients/${id}`);
 
-export const updatePatientRequest = (id, patient) => axios.put(`/patients/${id}`, patient)
+// Actualizar un paciente por ID
+export const updatePatientRequest = (id, patient) => client.put(`/veterinario/patients/${id}`, patient);
