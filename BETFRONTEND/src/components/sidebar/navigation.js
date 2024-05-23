@@ -1,4 +1,4 @@
-import { FaHome, FaUserInjured, FaCog } from "react-icons/fa";
+import { FaHome, FaUserInjured, FaCog, FaFileMedical } from "react-icons/fa";
 
 
 export const privateRoutes = [
@@ -8,9 +8,9 @@ export const privateRoutes = [
     icon: FaHome,
   },
   {
-    name: "Pacientes",
+    name: "Consultorio",
     path: "/veterinario/patients",
-    icon: FaUserInjured,
+    icon: FaFileMedical,
   },
   {
     name: "Administración",

@@ -1,44 +1,46 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { privateRoutes } from "./navigation";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { FaHome, FaUserMd, FaUserShield } from "react-icons/fa";
+import { useAuth } from "../../context/AuthContext";
+import AccesoDenegadoModal from "../modals/AccesoDenegadoModal"; // Import the modal component
 
-function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
+const Sidebar = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [showAccessDenied, setShowAccessDenied] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+  const handleAdminClick = (e) => {
+    if (user.role_id === 2) { // Assuming role_id 2 is for VETERINARIO
+      e.preventDefault();
+      setShowAccessDenied(true);
+      setTimeout(() => setShowAccessDenied(false), 3000);
+    } else {
+      navigate("/admin");
+    }
   };
 
   return (
-    <>
-      <button
-        className="fixed top-4 left-4 z-50 text-white bg-gray-800 p-2 rounded-md"
-        onClick={toggleSidebar}
-      >
-        {isOpen ? <FaTimes /> : <FaBars />}
-      </button>
-      <div
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white w-64 space-y-6 py-7 px-2 transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out`}
-      >
-        <nav>
-          {privateRoutes.map(({ path, name, icon: Icon }) => (
-            <Link
-              to={path}
-              key={path}
-              className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-              onClick={toggleSidebar}
-            >
-              <Icon className="inline-block mr-2" />
-              {name}
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </>
+    <div className="bg-gray-900 text-white h-screen w-64 p-5">
+      <ul>
+        <li className="mb-8">
+          <Link to="/home" className="flex items-center text-lg">
+            <FaHome className="mr-4 text-2xl" /> Inicio
+          </Link>
+        </li>
+        <li className="mb-8">
+          <Link to="/veterinario/patients" className="flex items-center text-lg">
+            <FaUserMd className="mr-4 text-2xl" /> Consultorio
+          </Link>
+        </li>
+        <li className="mb-8">
+          <Link to="/admin" className="flex items-center text-lg" onClick={handleAdminClick}>
+            <FaUserShield className="mr-4 text-2xl" /> Administración
+          </Link>
+        </li>
+      </ul>
+      {showAccessDenied && <AccesoDenegadoModal />}
+    </div>
   );
-}
+};
 
 export default Sidebar;

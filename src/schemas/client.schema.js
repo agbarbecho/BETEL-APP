@@ -23,14 +23,14 @@ export const createClientSchema = z.object({
     .min(1)
     .max(10),
   address: z
-    .number({
+    .string({
       required_error: "La dirección es requerida",
       invalid_type_error: "La dirección debe ser texto",
     })
     .min(1)
     .max(255),
     email: z
-    .number({
+    .string({
       required_error: "El peso es requerido",
       invalid_type_error: "El email debe ser un texto",
     })
@@ -63,14 +63,14 @@ phone: z
   .min(1)
   .max(255),
 address: z
-  .number({
+  .string({
     required_error: "la dirección es requerida",
     invalid_type_error: "la dirección debe ser texto",
   })
   .min(0)
   .max(999.99),
   email: z
-  .number({
+  .string({
     required_error: "El peso es requerido",
     invalid_type_error: "El email debe ser un texto",
   })

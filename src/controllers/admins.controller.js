@@ -23,6 +23,10 @@ export const assignRole = async (req, res, next) => {
 
     const { userId, roleId } = req.body;
 
+    if (typeof userId !== 'number' || typeof roleId !== 'number') {
+      return res.status(400).json({ message: 'Datos inválidos.' });
+    }
+
     const result = await pool.query(
       "UPDATE users SET role_id = $1 WHERE id = $2 RETURNING id, name, email, role_id",
       [roleId, userId]
