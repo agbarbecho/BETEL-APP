@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { Routes, Route, Outlet } from "react-router-dom";
-import { useAuth } from "./context/AuthContext";
-import { ConsultorioProvider } from "./context/ConsultorioContext";
-import { UserProvider } from "./context/UserContext";
-import { ModalProvider } from "./context/ModalContext";
+// src/App.jsx
+import React from 'react';
+import { Routes, Route, Outlet } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import { ConsultorioProvider } from './context/ConsultorioContext';
+import { UserProvider } from './context/UserContext';
+import { ModalProvider } from './context/ModalContext';
+import { ClientProvider } from './context/ClientContext';
 
-import Navbar from "./components/navbar/Navbar";
-import Sidebar from "./components/sidebar/Sidebar";
-import { Container } from "./components/ui/Container";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import Navbar from './components/navbar/Navbar';
+import Sidebar from './components/sidebar/Sidebar';
+import { Container } from './components/ui/Container';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import ConsultorioPage from "./pages/ConsultorioPage";
-import ProfilePage from "./pages/ProfilePage";
-import AdminPage from "./pages/AdminPage";
-import NotFound from "./pages/NotFound";
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ConsultorioPage from './pages/ConsultorioPage';
+import ProfilePage from './pages/ProfilePage';
+import AdminPage from './pages/AdminPage';
+import DetallePage from './pages/DetallePage';
+import NotFound from './pages/NotFound';
 
 function App() {
   const { isAuth, loading, user } = useAuth();
@@ -40,6 +43,7 @@ function App() {
                 <Route element={<ConsultorioProvider><Outlet /></ConsultorioProvider>}>
                   <Route path="/home" element={<HomePage />} />
                   <Route path="/veterinario/patients" element={<ConsultorioPage />} />
+                  <Route path="/veterinario/patients/:id" element={<ClientProvider><DetallePage /></ClientProvider>} />
                 </Route>
                 <Route path="/profile" element={<ProfilePage />} />
 

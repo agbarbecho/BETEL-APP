@@ -1,13 +1,16 @@
+// src/pages/ConsultorioPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useConsultorio } from '../context/ConsultorioContext';
+import { useNavigate } from 'react-router-dom';
 import ConsultorioInput from '../components/ui/consultorio/ConsultorioInput';
 import ConsultorioButton from '../components/ui/consultorio/ConsultorioButton';
 import RegisterClientModal from '../components/ui/consultorio/RegisterClientModal';
-import { FaPlus, FaUser, FaSearch, FaDog } from 'react-icons/fa';
+import { FaPlus, FaUser, FaSearch, FaDog, FaChevronRight } from 'react-icons/fa';
 
 const ConsultorioPage = () => {
   const { clients, patients, fetchClients, fetchPatients } = useConsultorio();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchClients();
@@ -52,40 +55,41 @@ const ConsultorioPage = () => {
         <div className="flex justify-center mt-4">
           <ConsultorioButton text="Buscar" icon={<FaSearch />} />
         </div>
-        <h2 className="text-xl font-bold mt-6 mb-2 text-center">Resultados</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full table-auto text-center">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 border-b-2 border-gray-300">Identificador</th>
-                <th className="px-4 py-2 border-b-2 border-gray-300">Nombre</th>
-                <th className="px-4 py-2 border-b-2 border-gray-300">Teléfono</th>
-                <th className="px-4 py-2 border-b-2 border-gray-300">Mascotas</th>
-                <th className="px-4 py-2 border-b-2 border-gray-300">Acciones</th>
+        <h2 className="text-xl font-bold mt-6 mb-2">Resultados</h2>
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 border-b-2 border-gray-300">Identificador</th>
+              <th className="px-4 py-2 border-b-2 border-gray-300">Nombre</th>
+              <th className="px-4 py-2 border-b-2 border-gray-300">Teléfono</th>
+              <th className="px-4 py-2 border-b-2 border-gray-300">Mascotas</th>
+              <th className="px-4 py-2 border-b-2 border-gray-300">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {clients.map((client) => (
+              <tr key={client.id} className="border-b">
+                <td className="border-t px-4 py-3">{client.cedula}</td>
+                <td className="border-t px-4 py-3">{client.full_name}</td>
+                <td className="border-t px-4 py-3">{client.phone}</td>
+                <td className="border-t px-4 py-3">
+                  {patients
+                    .filter((patient) => patient.client_id === client.id)
+                    .map((patient) => patient.name)
+                    .join(', ')}
+                </td>
+                <td className="border-t px-4 py-3">
+                  <button
+                    onClick={() => navigate(`/veterinario/patients/${client.id}`)}
+                    className="bg-blue-500 text-white px-2 py-1 rounded flex items-center"
+                  >
+                    <FaChevronRight />
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {clients.map((client) => (
-                <tr key={client.id} className="border-b">
-                  <td className="border-t px-4 py-3">{client.cedula}</td>
-                  <td className="border-t px-4 py-3">{client.full_name}</td>
-                  <td className="border-t px-4 py-3">{client.phone}</td>
-                  <td className="border-t px-4 py-3">
-                    {patients
-                      .filter((patient) => patient.client_id === client.id)
-                      .map((patient) => patient.name)
-                      .join(', ')}
-                  </td>
-                  <td className="border-t px-4 py-3">
-                    <button className="bg-blue-500 text-white px-2 py-1 rounded">
-                      <FaSearch />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
       <RegisterClientModal
         isOpen={isModalOpen}
