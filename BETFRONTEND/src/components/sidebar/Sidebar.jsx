@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaHome, FaUserMd, FaUserShield } from "react-icons/fa";
+import { FaHome, FaUserMd, FaUserShield, FaDog } from "react-icons/fa"; // Importa FaDog
 import { useAuth } from "../../context/AuthContext";
-import AccesoDenegadoModal from "../modals/AccesoDenegadoModal"; // Import the modal component
+import AccesoDenegadoModal from "../modals/AccesoDenegadoModal"; // Importa el componente del modal
 
 const Sidebar = () => {
   const { user } = useAuth();
@@ -10,7 +10,7 @@ const Sidebar = () => {
   const [showAccessDenied, setShowAccessDenied] = useState(false);
 
   const handleAdminClick = (e) => {
-    if (user.role_id === 2) { // Assuming role_id 2 is for VETERINARIO
+    if (user.role_id === 2) { // Asumiendo que role_id 2 es para VETERINARIO
       e.preventDefault();
       setShowAccessDenied(true);
       setTimeout(() => setShowAccessDenied(false), 3000);
@@ -30,6 +30,11 @@ const Sidebar = () => {
         <li className="mb-8">
           <Link to="/veterinario/patients" className="flex items-center text-lg">
             <FaUserMd className="mr-4 text-2xl" /> Consultorio
+          </Link>
+        </li>
+        <li className="mb-8">
+          <Link to="/pets" className="flex items-center text-lg"> {/* Agrega el enlace para Mascotas */}
+            <FaDog className="mr-4 text-2xl" /> Mascotas
           </Link>
         </li>
         <li className="mb-8">

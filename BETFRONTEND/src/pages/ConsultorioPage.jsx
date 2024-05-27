@@ -1,4 +1,3 @@
-// src/pages/ConsultorioPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useConsultorio } from '../context/ConsultorioContext';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +9,8 @@ import { FaPlus, FaUser, FaSearch, FaDog, FaChevronRight } from 'react-icons/fa'
 const ConsultorioPage = () => {
   const { clients, patients, fetchClients, fetchPatients } = useConsultorio();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchClient, setSearchClient] = useState('');
+  const [searchPet, setSearchPet] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +24,30 @@ const ConsultorioPage = () => {
     fetchClients();
     closeModal();
   };
+
+  const handleClientSearchChange = (e) => {
+    setSearchClient(e.target.value);
+  };
+
+  const handlePetSearchChange = (e) => {
+    setSearchPet(e.target.value);
+  };
+
+  const filteredClients = clients.filter((client) => {
+    const clientNameMatch = client.full_name.toLowerCase().includes(searchClient.toLowerCase());
+    const clientCedulaMatch = client.cedula.toLowerCase().includes(searchClient.toLowerCase());
+    return clientNameMatch || clientCedulaMatch;
+  });
+
+  const filteredPatients = patients.filter((patient) => 
+    patient.name.toLowerCase().includes(searchPet.toLowerCase())
+  );
+
+  const clientsToShow = searchPet 
+    ? filteredClients.filter((client) =>
+        filteredPatients.some((patient) => patient.client_id === client.id)
+      )
+    : filteredClients;
 
   return (
     <div className="container mx-auto p-4">
@@ -42,6 +67,8 @@ const ConsultorioPage = () => {
               label="Propietario"
               placeholder="Buscar por nombre o cédula"
               icon={<FaUser />}
+              value={searchClient}
+              onChange={handleClientSearchChange}
             />
           </div>
           <div className="flex-1 mb-4 md:mb-0 md:ml-2">
@@ -49,6 +76,8 @@ const ConsultorioPage = () => {
               label="Mascota"
               placeholder="Buscar por nombre"
               icon={<FaDog />}
+              value={searchPet}
+              onChange={handlePetSearchChange}
             />
           </div>
         </div>
@@ -59,29 +88,29 @@ const ConsultorioPage = () => {
         <table className="w-full table-auto">
           <thead>
             <tr>
-              <th className="px-4 py-2 border-b-2 border-gray-300">Identificador</th>
-              <th className="px-4 py-2 border-b-2 border-gray-300">Nombre</th>
-              <th className="px-4 py-2 border-b-2 border-gray-300">Teléfono</th>
-              <th className="px-4 py-2 border-b-2 border-gray-300">Mascotas</th>
-              <th className="px-4 py-2 border-b-2 border-gray-300">Acciones</th>
+              <th className="px-4 py-2 border-b-2 border-gray-300 text-center">Identificador</th>
+              <th className="px-4 py-2 border-b-2 border-gray-300 text-center">Nombre</th>
+              <th className="px-4 py-2 border-b-2 border-gray-300 text-center">Teléfono</th>
+              <th className="px-4 py-2 border-b-2 border-gray-300 text-center">Mascotas</th>
+              <th className="px-4 py-2 border-b-2 border-gray-300 text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {clients.map((client) => (
+            {clientsToShow.map((client) => (
               <tr key={client.id} className="border-b">
-                <td className="border-t px-4 py-3">{client.cedula}</td>
-                <td className="border-t px-4 py-3">{client.full_name}</td>
-                <td className="border-t px-4 py-3">{client.phone}</td>
-                <td className="border-t px-4 py-3">
+                <td className="border-t px-4 py-3 text-center">{client.cedula}</td>
+                <td className="border-t px-4 py-3 text-center">{client.full_name}</td>
+                <td className="border-t px-4 py-3 text-center">{client.phone}</td>
+                <td className="border-t px-4 py-3 text-center">
                   {patients
                     .filter((patient) => patient.client_id === client.id)
                     .map((patient) => patient.name)
                     .join(', ')}
                 </td>
-                <td className="border-t px-4 py-3">
+                <td className="border-t px-4 py-3 text-center">
                   <button
                     onClick={() => navigate(`/veterinario/patients/${client.id}`)}
-                    className="bg-blue-500 text-white px-2 py-1 rounded flex items-center"
+                    className="bg-blue-500 text-white px-2 py-1 rounded flex items-center justify-center mx-auto"
                   >
                     <FaChevronRight />
                   </button>

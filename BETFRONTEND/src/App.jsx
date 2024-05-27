@@ -20,6 +20,7 @@ import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
 import DetallePage from './pages/DetallePage';
 import NotFound from './pages/NotFound';
+import PetsPage from './pages/PetsPage'; // Importa la nueva página
 
 function App() {
   const { isAuth, loading, user } = useAuth();
@@ -52,6 +53,8 @@ function App() {
                     <Route path="/admin" element={<AdminPage />} />
                   </Route>
                 </Route>
+
+                <Route path="/pets" element={<PetsPage />} /> {/* Nueva ruta */}
               </Route>
 
               <Route path="*" element={<NotFound />} />
