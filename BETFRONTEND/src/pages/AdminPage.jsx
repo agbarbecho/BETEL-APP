@@ -1,151 +1,150 @@
-import React, { useEffect, useState } from "react";
-import { useUserContext } from "../context/UserContext"; 
-import { FaTrash, FaEdit, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import ReusableModal from "../components/modals/ReusableModal";
+import React, { useState, useEffect } from 'react';
+import { useConsultorio } from '../context/ClientsContext';
+import { useNavigate } from 'react-router-dom';
+import ConsultorioInput from '../components/ui/consultorio/ConsultorioInput';
+import ConsultorioButton from '../components/ui/consultorio/ConsultorioButton';
+import RegisterClientModal from '../components/ui/consultorio/RegisterClientModal';
+import { FaPlus, FaUser, FaSearch, FaDog, FaLeaf } from 'react-icons/fa';
 
-function AdminPage() {
-  const { users, loadUsers, deleteUser, updateUserRole } = useUserContext();
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortedUsers, setSortedUsers] = useState([]);
-  const usersPerPage = 5;
-
-  useEffect(() => {
-    loadUsers();
-  }, [loadUsers]);
+const ConsultorioPage = () => {
+  const { clients, patients, fetchClients, fetchPatients } = useConsultorio();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchClient, setSearchClient] = useState('');
+  const [searchPet, setSearchPet] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const sorted = [...users].sort((a, b) => a.role_id - b.role_id);
-    setSortedUsers(sorted);
-  }, [users]);
+    fetchClients();
+    fetchPatients();
+  }, [fetchClients, fetchPatients]);
 
-  const openRoleModal = (user) => {
-    setSelectedUser(user);
-    setIsRoleModalOpen(true);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  const handleRegisterSuccess = () => {
+    fetchClients();
+    closeModal();
   };
 
-  const closeRoleModal = () => {
-    setSelectedUser(null);
-    setIsRoleModalOpen(false);
+  const handleClientSearchChange = (e) => {
+    setSearchClient(e.target.value);
   };
 
-  const handleChangeRole = (id, roleId) => {
-    updateUserRole(id, roleId);
-    closeRoleModal();
+  const handlePetSearchChange = (e) => {
+    setSearchPet(e.target.value);
   };
 
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = sortedUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const filteredClients = clients.filter((client) => {
+    const clientNameMatch = client.full_name.toLowerCase().includes(searchClient.toLowerCase());
+    const clientCedulaMatch = client.cedula.toLowerCase().includes(searchClient.toLowerCase());
+    return clientNameMatch || clientCedulaMatch;
+  });
 
-  const paginateNext = () => setCurrentPage(currentPage + 1);
-  const paginatePrev = () => setCurrentPage(currentPage - 1);
+  const filteredPatients = patients.filter((patient) => 
+    patient.name.toLowerCase().includes(searchPet.toLowerCase())
+  );
+
+  const clientsToShow = filteredClients.filter((client) =>
+    filteredPatients.some((patient) => patient.client_id === client.id)
+  );
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-5">Administración de Usuarios</h1>
-      <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-        <table className="min-w-full leading-normal">
-          <thead>
-            <tr>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                ID
-              </th>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Nombre
-              </th>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Rol
-              </th>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentUsers.map((user) => (
-              <tr key={user.id}>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                  {user.id}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                  {user.name}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                  {user.email}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                  {user.role_id === 1 ? 'ADMIN' : user.role_id === 2 ? 'VETERINARIO' : 'USER'}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm flex space-x-2">
-                  <button
-                    onClick={() => openRoleModal(user)}
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center"
-                  >
-                    <FaEdit className="mr-2" /> Editar
-                  </button>
-                  <button
-                    onClick={() => deleteUser(user.id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center"
-                  >
-                    <FaTrash className="mr-2" /> Eliminar
-                  </button>
-                </td>
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between mb-4">
+        <h1 className="text-2xl font-bold">Consultorio</h1>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center"
+          onClick={openModal}
+        >
+          <FaPlus className="mr-2" /> Registrar propietario
+        </button>
+      </div>
+      <div className="bg-white p-4 rounded shadow">
+        <div className="flex flex-wrap justify-between items-center mb-4">
+          <div className="flex-1 mb-2 md:mb-0">
+            <ConsultorioInput
+              label="Propietario"
+              placeholder="Buscar por nombre o cédula"
+              icon={<FaUser />}
+              value={searchClient}
+              onChange={handleClientSearchChange}
+              className="w-full"
+            />
+          </div>
+          <div className="flex-1 mb-2 md:mb-0">
+            <ConsultorioInput
+              label="Mascota"
+              placeholder="Buscar por nombre"
+              icon={<FaDog />}
+              value={searchPet}
+              onChange={handlePetSearchChange}
+              className="w-full"
+            />
+          </div>
+        </div>
+        <div className="flex justify-center mt-4">
+          <ConsultorioButton text="Buscar" icon={<FaSearch />} />
+        </div>
+        <h2 className="text-xl font-bold mt-6 mb-2">Resultados</h2>
+        <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+          <table className="min-w-full leading-normal">
+            <thead>
+              <tr>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Identificador
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Nombre
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Teléfono
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Mascotas
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Acciones
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {clientsToShow.map((client) => (
+                <tr key={client.id}>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                    {client.cedula}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                    {client.full_name}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                    {client.phone}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                    {filteredPatients
+                      .filter((patient) => patient.client_id === client.id)
+                      .map((patient) => patient.name)
+                      .join(', ')}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                    <button
+                      onClick={() => navigate(`/veterinario/patients/${client.id}`)}
+                      className="bg-blue-500 text-white px-2 py-1 rounded flex items-center justify-center mx-auto"
+                    >
+                      <FaLeaf />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={paginatePrev}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
-          disabled={currentPage === 1}
-        >
-          <FaChevronLeft />
-        </button>
-        <button
-          onClick={paginateNext}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
-          disabled={indexOfLastUser >= sortedUsers.length}
-        >
-          <FaChevronRight />
-        </button>
-      </div>
-      <ReusableModal
-        isOpen={isRoleModalOpen}
-        onClose={closeRoleModal}
-        title="Cambiar Rol de Usuario"
-        content={<p>Seleccione un nuevo rol para {selectedUser?.name}:</p>}
-        actions={
-          <>
-            <button
-              onClick={() => handleChangeRole(selectedUser?.id, 1)}
-              className="bg-blue-500 text-white px-4 py-2 rounded mx-2"
-            >
-              ADMIN
-            </button>
-            <button
-              onClick={() => handleChangeRole(selectedUser?.id, 2)}
-              className="bg-green-500 text-white px-4 py-2 rounded mx-2"
-            >
-              VETERINARIO
-            </button>
-            <button
-              onClick={() => handleChangeRole(selectedUser?.id, 3)}
-              className="bg-gray-500 text-white px-4 py-2 rounded mx-2"
-            >
-              USER
-            </button>
-          </>
-        }
+      <RegisterClientModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onRegisterSuccess={handleRegisterSuccess}
       />
     </div>
   );
-}
+};
 
-export default AdminPage;
+export default ConsultorioPage;

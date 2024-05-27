@@ -1,17 +1,16 @@
-// src/context/ConsultorioContext.jsx
 import React, { createContext, useContext, useState, useCallback } from "react";
 import {
   getAllClientsRequest,
   getAllPatientsRequest,
-} from "../api/consultorio.api";
+} from "../api/clients.api";
 
-const ConsultorioContext = createContext();
+const ClientsContext = createContext();
 
-export const useConsultorio = () => {
-  return useContext(ConsultorioContext);
+export const useClients = () => {
+  return useContext(ClientsContext);
 };
 
-export const ConsultorioProvider = ({ children }) => {
+export const ClientsProvider = ({ children }) => {
   const [clients, setClients] = useState([]);
   const [patients, setPatients] = useState([]);
 
@@ -34,10 +33,10 @@ export const ConsultorioProvider = ({ children }) => {
   }, []);
 
   return (
-    <ConsultorioContext.Provider
+    <ClientsContext.Provider
       value={{ clients, patients, fetchClients, fetchPatients }}
     >
       {children}
-    </ConsultorioContext.Provider>
+    </ClientsContext.Provider>
   );
 };

@@ -15,9 +15,14 @@ function LoginPage() {
 
   const onSubmit = handleSubmit(async (data) => {
     const user = await signin(data);
+<<<<<<< HEAD
     if (user) {
       navigate("/profile");
     }
+=======
+
+    if (user) navigate("/home");
+>>>>>>> c7458fe7690004959645f45ef0867a64d6f1ce1f
   });
 
   return (

@@ -1,5 +1,7 @@
 // src/components/ui/consultorio/RegisterClientModal.jsx
 import React, { useState } from 'react';
+import { createClientRequest } from '../../../api/clients.api';
+
 
 const RegisterClientModal = ({ isOpen, onClose, onRegisterSuccess }) => {
   const [formData, setFormData] = useState({
