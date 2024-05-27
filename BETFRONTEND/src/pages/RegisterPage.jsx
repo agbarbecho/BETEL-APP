@@ -1,4 +1,5 @@
-import { Button, Card, Container, Input, Label } from "../components/ui";
+// src/pages/RegisterPage.jsx
+import { Button, Card, Input, Label, Container } from "../components/ui";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -15,63 +16,88 @@ function RegisterPage() {
   const onSubmit = handleSubmit(async (data) => {
     const user = await signup(data);
 
-    if (user) navigate("/patients");
+    if (user) {
+      navigate("/profile");
+    }
   });
 
   return (
-    <Container className="h-[calc(100vh-10rem)] flex items-center justify-center">
-      <Card>
-        {signupErrors &&
-          signupErrors?.map((err) => (
-            <p className="bg-red-500 text-white p-2 text-center">{err}</p>
-          ))}
+    <div className="flex justify-between h-screen">
+      <div className="w-1/4 flex items-center justify-center h-full">
+        <Card className="h-full">
+          {signupErrors &&
+            signupErrors.map((err) => (
+              <p key={err} className="bg-red-500 text-white p-2 text-center">
+                {err}
+              </p>
+            ))}
 
-        <h3 className="text-2xl font-bold">Register</h3>
+          <h1 className="text-4xl font-bold my-10 text-center text-white">Registro de usuario</h1>
 
-        <form onSubmit={onSubmit}>
-          <Label htmlFor="name">Name</Label>
-          <Input
-            placeholder="Enter your fullname"
-            {...register("name", {
-              required: true,
-            })}
-          />
+          <form onSubmit={onSubmit} className="space-y-4">
+            <label htmlFor="name" className="block text-white text-sm font-semibold">Nombre y Apellido</label>
+            <Input
+              placeholder="Ingrese sus nombres"
+              className="bg-gray-800 text-gray-300 w-full h-12 px-4 py-2"
+              {...register("name", {
+                required: "Name is required",
+              })}
+            />
+            {errors.name && (
+              <p className="text-red-500">Name is required</p>
+            )}
 
-          {errors.name && <p className="text-red-500">name is required</p>}
+            <label htmlFor="email" className="block text-white text-sm font-semibold">Email</label>
+            <Input
+              type="email"
+              placeholder="Ingrese su email"
+              className="bg-gray-800 text-gray-300 w-full h-12 px-4 py-2"
+              {...register("email", {
+                required: "Email is required",
+              })}
+            />
+            {errors.email && (
+              <p className="text-red-500">Email is required</p>
+            )}
 
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="email"
-            placeholder="Enter your email"
-            {...register("email", {
-              required: true,
-            })}
-          />
-          {errors.email && <p className="text-red-500">email is required</p>}
+            <label htmlFor="password" className="block text-white text-sm font-semibold">Contraseña</label>
+            <Input
+              type="password"
+              placeholder="Ingrese su contraseña"
+              className="bg-gray-800 text-gray-300 w-full h-12 px-4 py-2"
+              {...register("password", {
+                required: "Password is required",
+              })}
+            />
+            {errors.password && (
+              <p className="text-red-500">Password is required</p>
+            )}
 
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            placeholder="Enter your password"
-            {...register("password", {
-              required: true,
-            })}
-          />
-          {errors.password && (
-            <p className="text-red-500">password is required</p>
-          )}
+            <Button className="bg-gray-600 text-white rounded-full hover:bg-blue-600 px-6 py-2 text-lg">Registrarse</Button>
 
-          <Button>Register</Button>
-
-          <div className="flex justify-between my-4">
-            <p className="mr-4">Already have an account?</p>
-            <Link to="/login" className="font-bold">
-              Login
-            </Link>
+            <div className="flex justify-between m-1 text-white">
+              <p>Ya tienes una cuenta?</p>
+              <Link to="/login" className="font-bold text-white">
+                Ingresar
+              </Link>
+            </div>
+          </form>
+        </Card>
+      </div>
+      <div className="w-3/4 ml-10 my-0 relative">
+        <img
+          src="https://app.okvet.co/assets/media/bg/bg-okvet.jpg"
+          alt="Background"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 flex items-center justify-center text-white text-center">
+          <div>
+            <h2 className="text-4xl font-bold mb-4">El mejor software veterinario</h2>
+            <p>Empieza a gestionar tu veterinaria y organiza tu información para optimizar y automatizar los procesos.</p>
           </div>
-        </form>
-      </Card>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 }
 
