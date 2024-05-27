@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useConsultorio } from '../context/ConsultorioContext';
+import { useConsultorio } from '../context/ClientsContext';
 import { useNavigate } from 'react-router-dom';
 import ConsultorioInput from '../components/ui/consultorio/ConsultorioInput';
 import ConsultorioButton from '../components/ui/consultorio/ConsultorioButton';
