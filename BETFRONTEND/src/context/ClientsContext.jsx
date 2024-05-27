@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 import {
   getAllClientsRequest,
   getAllPatientsRequest,
+  createClientRequest,
 } from "../api/clients.api";
 
 const ClientsContext = createContext();
@@ -32,9 +33,18 @@ export const ClientsProvider = ({ children }) => {
     }
   }, []);
 
+  const addClient = useCallback(async (client) => {
+    try {
+      const response = await createClientRequest(client);
+      setClients((prevClients) => [...prevClients, response.data]);
+    } catch (error) {
+      console.error("Error adding client:", error);
+    }
+  }, []);
+
   return (
     <ClientsContext.Provider
-      value={{ clients, patients, fetchClients, fetchPatients }}
+      value={{ clients, patients, fetchClients, fetchPatients, addClient }}
     >
       {children}
     </ClientsContext.Provider>
