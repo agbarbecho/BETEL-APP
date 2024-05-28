@@ -38,3 +38,12 @@ export const isVeterinarian = (req, res, next) => {
   }
   next();
 };
+
+export const isAdminOrVeterinarian = (req, res, next) => {
+  if (req.user.role_id !== 1 && req.user.role_id !== 2) {
+    return res
+      .status(403)
+      .json({ message: "Acceso denegado. No tienes permisos para acceder a esta información." });
+  }
+  next();
+};

@@ -7,19 +7,19 @@ import {
   deleteClient,
 } from "../controllers/clients.controller.js";
 import { validateSchema } from "../middlewares/validate.middleware.js";
-import { isAuth, isVeterinarian } from "../middlewares/auth.middleware.js";
+import { isAuth, isAdminOrVeterinarian } from "../middlewares/auth.middleware.js";
 import { createClientSchema, updateClientSchema } from "../schemas/client.schema.js";
 
 const router = Router();
 
-router.get("/clients", isAuth, isVeterinarian, getAllClients);
+router.get("/clients", isAuth, isAdminOrVeterinarian, getAllClients);
 
-router.get("/clients/:id", isAuth, isVeterinarian, getClientById);
+router.get("/clients/:id", isAuth, isAdminOrVeterinarian, getClientById);
 
-router.post("/clients", isAuth, isVeterinarian, validateSchema(createClientSchema), createClient);
+router.post("/clients", isAuth, isAdminOrVeterinarian, validateSchema(createClientSchema), createClient);
 
-router.put("/clients/:id", isAuth, isVeterinarian,validateSchema(updateClientSchema), updateClient);
+router.put("/clients/:id", isAuth, isAdminOrVeterinarian, validateSchema(updateClientSchema), updateClient);
 
-router.delete("/delete/:id", isAuth, isVeterinarian, deleteClient);
+router.delete("/clients/:id", isAuth, isAdminOrVeterinarian, deleteClient);
 
 export default router;

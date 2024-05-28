@@ -3,12 +3,7 @@ import { pool } from "../db.js";
 // Obtener todos los clientes
 export const getAllClients = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
-
     const result = await pool.query("SELECT id, full_name, email, phone, cedula FROM clients");
-
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -18,10 +13,6 @@ export const getAllClients = async (req, res, next) => {
 // Obtener un cliente específico
 export const getClientById = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
-
     const { clientId } = req.params;
     const result = await pool.query("SELECT id, full_name, email, phone, cedula FROM clients WHERE id = $1", [clientId]);
 
@@ -38,11 +29,7 @@ export const getClientById = async (req, res, next) => {
 // Crear un nuevo cliente
 export const createClient = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
-
-    const { cedula, full_name, email, phone} = req.body;
+    const { cedula, full_name, email, phone } = req.body;
 
     const result = await pool.query(
       "INSERT INTO clients (cedula, full_name, email, phone) VALUES ($1, $2, $3, $4) RETURNING *",
@@ -58,10 +45,6 @@ export const createClient = async (req, res, next) => {
 // Actualizar información de un cliente
 export const updateClient = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
-
     const { clientId, full_name, email, phone, cedula } = req.body;
 
     await pool.query(
@@ -78,10 +61,6 @@ export const updateClient = async (req, res, next) => {
 // Eliminar un cliente
 export const deleteClient = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
-
     const { clientId } = req.params;
 
     await pool.query("DELETE FROM clients WHERE id = $1", [clientId]);

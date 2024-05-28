@@ -41,7 +41,7 @@ function App() {
               <Route element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}>
                 <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
                   <Route path="/home" element={<HomePage />} />
-                  <Route path="/veterinario/patients" element={<ClientsPage />} />
+                  <Route path="/veterinario/clients" element={<ClientsPage />} />
                 </Route>
                 <Route path="/profile" element={<ProfilePage />} />
 

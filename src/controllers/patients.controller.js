@@ -3,12 +3,7 @@ import { pool } from "../db.js";
 // Obtener todos los pacientes
 export const getAllPatients = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
-
     const result = await pool.query("SELECT id, name, breed, species, weight, client_id FROM patients");
-
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -18,12 +13,8 @@ export const getAllPatients = async (req, res, next) => {
 // Obtener un paciente por su ID
 export const getPatient = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
-
-    const { patientId } = req.params;
-    const result = await pool.query("SELECT id, name, breed, species, weight, client_id FROM patients WHERE id = $1", [patientId]);
+    const { id } = req.params;
+    const result = await pool.query("SELECT id, name, breed, species, weight, client_id FROM patients WHERE id = $1", [id]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ message: 'Paciente no encontrado' });
@@ -38,10 +29,6 @@ export const getPatient = async (req, res, next) => {
 // Crear un nuevo paciente
 export const createPatient = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
-
     const { name, breed, species, weight, client_id } = req.body;
 
     const result = await pool.query(
@@ -58,15 +45,12 @@ export const createPatient = async (req, res, next) => {
 // Actualizar información de un paciente
 export const updatePatient = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
-
-    const { patientId, name, breed, species, weight, client_id } = req.body;
+    const { id } = req.params;
+    const { name, breed, species, weight, client_id } = req.body;
 
     await pool.query(
       "UPDATE patients SET name = $1, breed = $2, species = $3, weight = $4, client_id = $5 WHERE id = $6",
-      [name, breed, species, weight, client_id, patientId]
+      [name, breed, species, weight, client_id, id]
     );
 
     res.json({ message: 'Paciente actualizado exitosamente.' });
@@ -78,13 +62,9 @@ export const updatePatient = async (req, res, next) => {
 // Eliminar un paciente
 export const deletePatient = async (req, res, next) => {
   try {
-    if (req.user.role_id !== 2) {
-      return res.status(403).json({ message: 'Acceso denegado. No eres un veterinario.' });
-    }
+    const { id } = req.params;
 
-    const { patientId } = req.params;
-
-    await pool.query("DELETE FROM patients WHERE id = $1", [patientId]);
+    await pool.query("DELETE FROM patients WHERE id = $1", [id]);
 
     res.json({ message: 'Paciente eliminado exitosamente.' });
   } catch (error) {

@@ -1,4 +1,4 @@
-// src/pages/LoginPage.jsx
+
 import { Card, Input, Button, Container } from "../components/ui";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -15,14 +15,9 @@ function LoginPage() {
 
   const onSubmit = handleSubmit(async (data) => {
     const user = await signin(data);
-<<<<<<< HEAD
     if (user) {
       navigate("/profile");
     }
-=======
-
-    if (user) navigate("/home");
->>>>>>> c7458fe7690004959645f45ef0867a64d6f1ce1f
   });
 
   return (

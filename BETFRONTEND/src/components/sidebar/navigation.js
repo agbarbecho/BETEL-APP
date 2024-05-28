@@ -8,7 +8,7 @@ export const privateRoutes = [
     icon: FaHome,
   },
   {
-    name: "Consultorio",
+    name: "Clientes",
     path: "/veterinario/patients",
     icon: FaFileMedical,
   },

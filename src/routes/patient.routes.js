@@ -7,20 +7,19 @@ import {
   deletePatient,
 } from "../controllers/patients.controller.js";
 import { validateSchema } from "../middlewares/validate.middleware.js";
-import { isAuth, isVeterinarian } from "../middlewares/auth.middleware.js";
-import {  createPatientSchema , updatePatientSchema } from "../schemas/patient.schema.js";
-
+import { isAuth, isAdminOrVeterinarian } from "../middlewares/auth.middleware.js";
+import { createPatientSchema, updatePatientSchema } from "../schemas/patient.schema.js";
 
 const router = Router();
 
-router.get("/patients", isAuth, isVeterinarian,getAllPatients);
+router.get("/patients", isAuth, isAdminOrVeterinarian, getAllPatients);
 
-router.get("/patients/id", isAuth, isVeterinarian, getPatient);
+router.get("/patients/:id", isAuth, isAdminOrVeterinarian, getPatient);
 
-router.post("/patients", isAuth, isVeterinarian, validateSchema(createPatientSchema), createPatient);
+router.post("/patients", isAuth, isAdminOrVeterinarian, validateSchema(createPatientSchema), createPatient);
 
-router.put("/patients/:id", isAuth, isVeterinarian, validateSchema(updatePatientSchema), updatePatient);
+router.put("/patients/:id", isAuth, isAdminOrVeterinarian, validateSchema(updatePatientSchema), updatePatient);
 
-router.delete("/patients/:id", isAuth, deletePatient);
+router.delete("/patients/:id", isAuth, isAdminOrVeterinarian, deletePatient);
 
 export default router;

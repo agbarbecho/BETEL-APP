@@ -1,10 +1,11 @@
+// src/pages/AdminPage.jsx
 import React, { useEffect, useState } from "react";
-import { useClients } from "../context/ClientsContext"; // Cambia useConsultorio por useClients
+import { useUserContext } from "../context/UserContext"; 
 import { FaTrash, FaEdit, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import ReusableModal from "../components/modals/ReusableModal";
 
 function AdminPage() {
-  const { users, loadUsers, deleteUser, updateUserRole } = useClients(); // Cambia useConsultorio por useClients
+  const { users, loadUsers, deleteUser, updateUserRole } = useUserContext();
   const [selectedUser, setSelectedUser] = useState(null);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);

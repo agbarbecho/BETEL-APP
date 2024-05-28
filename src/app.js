@@ -7,7 +7,7 @@ import authRoutes from "./routes/auth.routes.js";
 import clientRoutes from "./routes/client.routes.js"; // Importa las rutas de clientes
 import patientRoutes from "./routes/patient.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
-import { isAuth, isAdmin, isVeterinarian } from "./middlewares/auth.middleware.js";
+import { isAuth, isAdmin, isVeterinarian, isAdminOrVeterinarian } from "./middlewares/auth.middleware.js";
 
 const app = express();
 
@@ -27,8 +27,8 @@ app.use("/api", authRoutes);
 
 // Rutas protegidas
 app.use("/api/admin", isAuth, isAdmin, adminRoutes);
-app.use("/api/veterinario", isAuth, isVeterinarian, clientRoutes, patientRoutes); 
-
+app.use("/api/veterinario", isAuth, isAdminOrVeterinarian, clientRoutes);
+app.use("/api/veterinario", isAuth, isAdminOrVeterinarian, patientRoutes);
 
 // Error Handler
 app.use((err, req, res, next) => {
@@ -39,4 +39,3 @@ app.use((err, req, res, next) => {
 });
 
 export default app;
-
