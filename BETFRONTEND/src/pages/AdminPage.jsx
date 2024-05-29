@@ -8,6 +8,7 @@ function AdminPage() {
   const { users, loadUsers, deleteUser, updateUserRole } = useUserContext();
   const [selectedUser, setSelectedUser] = useState(null);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [isDeletedModalOpen, setIsDeletedModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortedUsers, setSortedUsers] = useState([]);
   const [usersPerPage, setUsersPerPage] = useState(10);
@@ -56,6 +57,14 @@ function AdminPage() {
   const handleUsersPerPageChange = (event) => {
     setUsersPerPage(Number(event.target.value));
     setCurrentPage(1); // Reset to first page
+  };
+
+  const handleDeleteUser = (id) => {
+    deleteUser(id);
+    setIsDeletedModalOpen(true);
+    setTimeout(() => {
+      setIsDeletedModalOpen(false);
+    }, 3000);
   };
 
   return (
@@ -147,7 +156,7 @@ function AdminPage() {
                     <FaEdit className="mr-2" /> Editar
                   </button>
                   <button
-                    onClick={() => deleteUser(user.id)}
+                    onClick={() => handleDeleteUser(user.id)}
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center"
                   >
                     <FaTrash className="mr-2" /> Eliminar
@@ -184,6 +193,30 @@ function AdminPage() {
               USER
             </button>
           </>
+        }
+      />
+      <ReusableModal
+        isOpen={isDeletedModalOpen}
+        onClose={() => setIsDeletedModalOpen(false)}
+        title="Usuario Eliminado"
+        content={
+          <div className="text-center">
+            <svg
+              className="mx-auto mb-4 w-14 h-14 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <p className="text-gray-700">Usuario eliminado correctamente.</p>
+          </div>
         }
       />
     </div>
