@@ -1,4 +1,4 @@
-// src/components/ui/consultorio/ConsultorioLabel.jsx
+// src/components/ui/clients/ClientsLabel.jsx
 import React from 'react';
 
 const ClientsLabel = ({ htmlFor, children, className }) => {

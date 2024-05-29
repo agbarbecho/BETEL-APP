@@ -14,12 +14,12 @@ const router = Router();
 
 router.get("/clients", isAuth, isAdminOrVeterinarian, getAllClients);
 
-router.get("/clients/:id", isAuth, isAdminOrVeterinarian, getClientById);
+router.get("/clients/:clientId", isAuth, isAdminOrVeterinarian, getClientById);
 
 router.post("/clients", isAuth, isAdminOrVeterinarian, validateSchema(createClientSchema), createClient);
 
-router.put("/clients/:id", isAuth, isAdminOrVeterinarian, validateSchema(updateClientSchema), updateClient);
+router.put("/clients/:clientId", isAuth, isAdminOrVeterinarian, validateSchema(updateClientSchema), updateClient);
 
-router.delete("/clients/:id", isAuth, isAdminOrVeterinarian, deleteClient);
+router.delete("/clients/:clientId", isAuth, isAdminOrVeterinarian, deleteClient);
 
 export default router;

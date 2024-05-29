@@ -14,12 +14,12 @@ const router = Router();
 
 router.get("/patients", isAuth, isAdminOrVeterinarian, getAllPatients);
 
-router.get("/patients/:id", isAuth, isAdminOrVeterinarian, getPatient);
+router.get("/patients/:patientId", isAuth, isAdminOrVeterinarian, getPatient);
 
 router.post("/patients", isAuth, isAdminOrVeterinarian, validateSchema(createPatientSchema), createPatient);
 
-router.put("/patients/:id", isAuth, isAdminOrVeterinarian, validateSchema(updatePatientSchema), updatePatient);
+router.put("/patients/:patientId", isAuth, isAdminOrVeterinarian, validateSchema(updatePatientSchema), updatePatient);
 
-router.delete("/patients/:id", isAuth, isAdminOrVeterinarian, deletePatient);
+router.delete("/patients/:patientId", isAuth, isAdminOrVeterinarian, deletePatient);
 
 export default router;

@@ -1,5 +1,6 @@
 // src/pages/ClientsPage.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useClients } from '../context/ClientsContext';
 import { FaPlus, FaEllipsisV, FaUser, FaTrash, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import RegisterClientModal from '../components/ui/clientes/RegisterClientModal';
@@ -14,6 +15,7 @@ const ClientsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [clientsPerPage, setClientsPerPage] = useState(10);
   const [isDeletedModalOpen, setIsDeletedModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchClients();
@@ -74,6 +76,10 @@ const ClientsPage = () => {
     openDeletedModal();
   };
 
+  const handleViewProfile = (id) => {
+    navigate(`/veterinario/clients/${id}`);
+  };
+
   return (
     <ContainerClient className="w-full p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-4">
@@ -126,25 +132,25 @@ const ClientsPage = () => {
           <table className="min-w-full leading-normal">
             <thead>
               <tr className="bg-gray-800 text-white">
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Nombre
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Cédula
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Celular
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Dirección
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Fecha de Creación
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
@@ -181,7 +187,10 @@ const ClientsPage = () => {
                       {isDropdownOpen === client.id && (
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
                           <ul>
-                            <li className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+                            <li
+                              className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => handleViewProfile(client.id)}
+                            >
                               <FaUser className="mr-2" />
                               Ver Perfil
                             </li>
