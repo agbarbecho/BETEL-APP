@@ -42,7 +42,7 @@ function App() {
                 <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
                   <Route path="/home" element={<HomePage />} />
                   <Route path="/veterinario/clients" element={<ClientsPage />} />
-                  <Route path="/veterinario/clients/:id/patients" element={<CreatePetPage />} /> {/* Cambia la ruta aquí */}
+            <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
                 </Route>
                 <Route path="/profile" element={<ProfilePage />} />
 

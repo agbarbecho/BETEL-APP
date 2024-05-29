@@ -1,4 +1,3 @@
-// src/pages/CreatePetPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getClientRequest } from '../api/clients.api';
@@ -49,7 +48,7 @@ const CreatePetPage = () => {
     e.preventDefault();
     try {
       await createPatientRequest(form);
-      navigate(`/veterinario/clients/${id}/patients`);
+      navigate(`/veterinario/clients/${id}`);
     } catch (error) {
       console.error('Error creating patient:', error);
     }
@@ -60,134 +59,87 @@ const CreatePetPage = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/3 p-4">
-          <div className="bg-white p-4 rounded shadow-md">
-            <h2 className="text-2xl font-bold mb-4">INFORMACIÓN PERSONAL</h2>
-            <p><strong>Nombre:</strong> {client.full_name}</p>
-            <p><strong>Cédula:</strong> {client.cedula}</p>
-            <p><strong>Celular:</strong> {client.phone}</p>
-            <p><strong>Email:</strong> {client.email}</p>
-            <p><strong>Dirección:</strong> {client.address}</p>
-            <p><strong>Fecha de Creación:</strong> {new Date(client.created_at).toLocaleDateString()}</p>
-            <div className="flex mt-4">
-              <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mr-2">Editar</button>
-              <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">Eliminar</button>
-            </div>
-          </div>
+    <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4">
+      <div className="md:w-1/3 p-4 bg-white shadow-md rounded-lg">
+        <div className="flex justify-center mb-4">
+          <img
+            src="https://via.placeholder.com/150" // Replace with client's profile image URL
+            alt="Client Profile"
+            className="w-24 h-24 rounded-full"
+          />
         </div>
-        <div className="md:w-2/3 p-4">
-          <div className="bg-white p-4 rounded shadow-md mb-4">
-            <h2 className="text-2xl font-bold mb-4">Pacientes</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full leading-normal">
-                <thead>
-                  <tr>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Nombre
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Raza
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Especie
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Peso
-                    </th>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Fecha de Creación
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {patients.map((patient) => (
-                    <tr key={patient.id}>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        {patient.name}
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        {patient.breed}
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        {patient.species}
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        {patient.weight} kg
-                      </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        {new Date(patient.created_at).toLocaleDateString()}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="bg-white p-4 rounded shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Crear Nueva Mascota</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+        <h2 className="text-center text-2xl font-bold mb-4">INFORMACIÓN PERSONAL</h2>
+        <div className="mb-4">
+          <p><strong>Nombre:</strong> {client.full_name}</p>
+          <p><strong>Cédula:</strong> {client.cedula}</p>
+          <p><strong>Celular:</strong> <a href={`tel:${client.phone}`} className="text-blue-500">{client.phone}</a></p>
+          <p><strong>Email:</strong> <a href={`mailto:${client.email}`} className="text-blue-500">{client.email}</a></p>
+          <p><strong>Profesión:</strong> {client.profession}</p>
+          <p><strong>Dirección:</strong> {client.address}</p>
+          <p><strong>Barrio:</strong> {client.neighborhood}</p>
+          <p><strong>Ciudad:</strong> {client.city}</p>
+        </div>
+        <div className="flex justify-between mt-4">
+          <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+            Editar
+          </button>
+          <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
+            Eliminar
+          </button>
+        </div>
+      </div>
+      <div className="md:w-2/3 p-4 bg-white shadow-md rounded-lg">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Pacientes</h2>
+          <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+            + Nuevo Paciente
+          </button>
+        </div>
+        <div className="overflow-x-auto mb-4">
+          <table className="min-w-full leading-normal">
+            <thead>
+              <tr>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Nombre
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="breed">
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Raza
-                </label>
-                <input
-                  type="text"
-                  name="breed"
-                  id="breed"
-                  value={form.breed}
-                  onChange={handleChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="species">
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Especie
-                </label>
-                <input
-                  type="text"
-                  name="species"
-                  id="species"
-                  value={form.species}
-                  onChange={handleChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="weight">
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Peso
-                </label>
-                <input
-                  type="number"
-                  name="weight"
-                  id="weight"
-                  value={form.weight}
-                  onChange={handleChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div className="mb-4">
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
-                  Crear Mascota
-                </button>
-              </div>
-            </form>
-          </div>
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Fecha de Creación
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {patients.map((patient) => (
+                <tr key={patient.id}>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {patient.name}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {patient.breed}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {patient.species}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {patient.weight} kg
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {new Date(patient.created_at).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+     
       </div>
     </div>
   );
