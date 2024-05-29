@@ -20,14 +20,14 @@ function Navbar() {
     setMenuOpen(!menuOpen);
   };
 
-  // Cerrar el menú cuando el usuario navega a una nueva página
+
   useEffect(() => {
     setMenuOpen(false);
   }, [location]);
 
   return (
     <nav className="bg-zinc-950">
-      <Container className="flex justify-between items-center py-3">
+      <Container className="flex justify-between items-center px-9 py-3">
         <h1 className="font-bold text-2xl text-white">BE-TEL</h1>
         
         <ul className="flex items-center gap-x-2 ml-auto">

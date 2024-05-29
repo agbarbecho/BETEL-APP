@@ -18,7 +18,7 @@ import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
 import NotFound from './pages/NotFound';
 import ClientsListPage from './pages/ClientsListPage';
-import PetsPage from './pages/PetsPage';
+import CreatePetPage from './pages/CreatePetPage'; // Importa la nueva página
 
 function App() {
   const { isAuth, loading, user } = useAuth();
@@ -41,7 +41,8 @@ function App() {
               <Route element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}>
                 <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
                   <Route path="/home" element={<HomePage />} />
-                  <Route path="/veterinario/patients" element={<ClientsPage />} />
+                  <Route path="/veterinario/clients" element={<ClientsPage />} />
+                  <Route path="/veterinario/clients/:id/patients" element={<CreatePetPage />} /> {/* Cambia la ruta aquí */}
                 </Route>
                 <Route path="/profile" element={<ProfilePage />} />
 
@@ -52,7 +53,6 @@ function App() {
                 </Route>
 
                 <Route path="/clients/list" element={<ClientsListPage />} /> {/* Nueva ruta */}
-                <Route path="/clients/pets" element={<PetsPage />} /> {/* Nueva ruta */}
               </Route>
 
               <Route path="*" element={<NotFound />} />

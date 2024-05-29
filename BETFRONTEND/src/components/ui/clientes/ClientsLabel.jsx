@@ -1,7 +1,7 @@
-// src/components/ui/consultorio/ConsultorioLabel.jsx
+// src/components/ui/clients/ClientsLabel.jsx
 import React from 'react';
 
-const ConsultorioLabel = ({ htmlFor, children, className }) => {
+const ClientsLabel = ({ htmlFor, children, className }) => {
   return (
     <label htmlFor={htmlFor} className={`block text-gray-700 font-bold mb-2 ${className}`}>
       {children}
@@ -9,4 +9,4 @@ const ConsultorioLabel = ({ htmlFor, children, className }) => {
   );
 };
 
-export default ConsultorioLabel;
+export default ClientsLabel;

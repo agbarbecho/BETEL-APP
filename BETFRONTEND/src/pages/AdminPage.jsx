@@ -1,12 +1,14 @@
+// src/pages/AdminPage.jsx
 import React, { useEffect, useState } from "react";
-import { useClients } from "../context/ClientsContext"; // Cambia useConsultorio por useClients
+import { useUserContext } from "../context/UserContext"; 
 import { FaTrash, FaEdit, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import ReusableModal from "../components/modals/ReusableModal";
 
 function AdminPage() {
-  const { users, loadUsers, deleteUser, updateUserRole } = useClients(); // Cambia useConsultorio por useClients
+  const { users, loadUsers, deleteUser, updateUserRole } = useUserContext();
   const [selectedUser, setSelectedUser] = useState(null);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [isDeletedModalOpen, setIsDeletedModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortedUsers, setSortedUsers] = useState([]);
   const [usersPerPage, setUsersPerPage] = useState(10);
@@ -55,6 +57,14 @@ function AdminPage() {
   const handleUsersPerPageChange = (event) => {
     setUsersPerPage(Number(event.target.value));
     setCurrentPage(1); // Reset to first page
+  };
+
+  const handleDeleteUser = (id) => {
+    deleteUser(id);
+    setIsDeletedModalOpen(true);
+    setTimeout(() => {
+      setIsDeletedModalOpen(false);
+    }, 3000);
   };
 
   return (
@@ -113,6 +123,9 @@ function AdminPage() {
                 Rol
               </th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Fecha de Creación
+              </th>
+              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Acciones
               </th>
             </tr>
@@ -132,6 +145,9 @@ function AdminPage() {
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   {user.role_id === 1 ? 'ADMIN' : user.role_id === 2 ? 'VETERINARIO' : 'USER'}
                 </td>
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  {new Date(user.created_at).toLocaleDateString()}
+                </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm flex space-x-2">
                   <button
                     onClick={() => openRoleModal(user)}
@@ -140,7 +156,7 @@ function AdminPage() {
                     <FaEdit className="mr-2" /> Editar
                   </button>
                   <button
-                    onClick={() => deleteUser(user.id)}
+                    onClick={() => handleDeleteUser(user.id)}
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center"
                   >
                     <FaTrash className="mr-2" /> Eliminar
@@ -177,6 +193,30 @@ function AdminPage() {
               USER
             </button>
           </>
+        }
+      />
+      <ReusableModal
+        isOpen={isDeletedModalOpen}
+        onClose={() => setIsDeletedModalOpen(false)}
+        title="Usuario Eliminado"
+        content={
+          <div className="text-center">
+            <svg
+              className="mx-auto mb-4 w-14 h-14 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <p className="text-gray-700">Usuario eliminado correctamente.</p>
+          </div>
         }
       />
     </div>
