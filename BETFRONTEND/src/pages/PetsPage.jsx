@@ -1,13 +1,32 @@
-// src/pages/PetsPage.jsx
-import React from 'react';
+// PetsPage.jsx
+import React, { useState } from 'react';
+import PetsModal from '../components/modals/PetsModal';
+import PetsForm from './PetsForm';
 
 const PetsPage = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Página de Mascotas</h1>
-      <p>Aquí puedes gestionar las mascotas.</p>
+    <div className="p-4">
+      <button
+        onClick={openModal}
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+      >
+        Registrar mascota
+      </button>
+
+      <PetsModal isOpen={isModalOpen} onClose={closeModal}>
+        <PetsForm />
+      </PetsModal>
     </div>
   );
 };
 
 export default PetsPage;
+
+
+
+
