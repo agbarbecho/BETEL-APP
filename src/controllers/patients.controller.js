@@ -3,7 +3,7 @@ import { pool } from "../db.js";
 // Obtener todos los pacientes
 export const getAllPatients = async (req, res, next) => {
   try {
-    const result = await pool.query("SELECT id, name, breed, species, weight, client_id FROM patients");
+    const result = await pool.query("SELECT id, name, breed, species, weight, created_at, client_id FROM patients");
     res.json(result.rows);
   } catch (error) {
     next(error);

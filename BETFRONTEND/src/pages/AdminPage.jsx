@@ -114,6 +114,9 @@ function AdminPage() {
                 Rol
               </th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Fecha de Creación
+              </th>
+              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Acciones
               </th>
             </tr>
@@ -132,6 +135,9 @@ function AdminPage() {
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   {user.role_id === 1 ? 'ADMIN' : user.role_id === 2 ? 'VETERINARIO' : 'USER'}
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  {new Date(user.created_at).toLocaleDateString()}
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm flex space-x-2">
                   <button

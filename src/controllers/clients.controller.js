@@ -3,7 +3,7 @@ import { pool } from "../db.js";
 // Obtener todos los clientes
 export const getAllClients = async (req, res, next) => {
   try {
-    const result = await pool.query("SELECT id, full_name, email, phone, cedula FROM clients");
+    const result = await pool.query("SELECT id, full_name, email, phone, cedula, created_at FROM clients");
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -14,7 +14,7 @@ export const getAllClients = async (req, res, next) => {
 export const getClientById = async (req, res, next) => {
   try {
     const { clientId } = req.params;
-    const result = await pool.query("SELECT id, full_name, email, phone, cedula FROM clients WHERE id = $1", [clientId]);
+    const result = await pool.query("SELECT id, full_name, email, phone, cedula, created_at FROM clients WHERE id = $1", [clientId]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
@@ -32,8 +32,8 @@ export const createClient = async (req, res, next) => {
     const { cedula, full_name, email, phone } = req.body;
 
     const result = await pool.query(
-      "INSERT INTO clients (cedula, full_name, email, phone) VALUES ($1, $2, $3, $4) RETURNING *",
-      [cedula, full_name, email, phone]
+      "INSERT INTO clients (cedula, full_name, email, phone, created_at) VALUES ($1, $2, $3, $4) RETURNING *",
+      [cedula, full_name, email, phone, created_at]
     );
 
     res.status(201).json(result.rows[0]);

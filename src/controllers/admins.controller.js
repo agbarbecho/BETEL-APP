@@ -7,13 +7,12 @@ export const getAllUsers = async (req, res, next) => {
       return res.status(403).json({ message: 'Acceso denegado. No eres un administrador.' });
     }
 
-    const result = await pool.query("SELECT id, name, email, role_id FROM users");
+    const result = await pool.query("SELECT id, name, email, role_id, created_at FROM users");
     res.json(result.rows);
   } catch (error) {
     next(error);
   }
 };
-
 // Asignar un rol a un usuario
 export const assignRole = async (req, res, next) => {
   try {

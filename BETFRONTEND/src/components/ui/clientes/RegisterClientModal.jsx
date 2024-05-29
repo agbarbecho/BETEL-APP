@@ -1,6 +1,7 @@
 // src/components/ui/consultorio/RegisterClientModal.jsx
 import React, { useState } from 'react';
 import { createClientRequest } from '../../../api/clients.api';
+import { useClients } from '../../../context/ClientsContext'; 
 
 
 const RegisterClientModal = ({ isOpen, onClose, onRegisterSuccess }) => {

@@ -1,6 +1,6 @@
 // src/context/ClientsContext.jsx
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { getAllClientsRequest, createClientRequest } from '../api/clients.api';
+import { getAllClientsRequest, createClientRequest, deleteClientRequest } from '../api/clients.api';
 
 const ClientsContext = createContext();
 
@@ -27,8 +27,17 @@ export const ClientsProvider = ({ children }) => {
     }
   }, []);
 
+  const deleteClient = useCallback(async (id) => {
+    try {
+      await deleteClientRequest(id);
+      setClients((prevClients) => prevClients.filter(client => client.id !== id));
+    } catch (error) {
+      console.error('Error deleting client:', error);
+    }
+  }, []);
+
   return (
-    <ClientsContext.Provider value={{ clients, fetchClients, addClient }}>
+    <ClientsContext.Provider value={{ clients, fetchClients, addClient, deleteClient }}>
       {children}
     </ClientsContext.Provider>
   );
