@@ -1,89 +1,58 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  FaHome,
-  FaUserMd,
-  FaUserShield,
-  FaDog,
-  FaChevronDown,
-  FaChevronUp,
-  FaUser,
-} from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FaHome, FaUserMd, FaUserShield, FaPaw, FaStethoscope, FaDog } from "react-icons/fa"; // Importa el ícono de perro
 import { useAuth } from "../../context/AuthContext";
-import AccesoDenegadoModal from "../modals/AccesoDenegadoModal"; // Importa el componente del modal
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const [showAccessDenied, setShowAccessDenied] = useState(false);
-  const [isClientsMenuOpen, setIsClientsMenuOpen] = useState(false);
-
-  const handleAdminClick = (e) => {
-    if (user.role_id === 2) {
-      // Asumiendo que role_id 2 es para VETERINARIO
-      e.preventDefault();
-      setShowAccessDenied(true);
-      setTimeout(() => setShowAccessDenied(false), 3000);
-    } else {
-      navigate("/admin");
-    }
-  };
-
-  const toggleClientsMenu = () => {
-    setIsClientsMenuOpen(!isClientsMenuOpen);
-  };
 
   return (
-    <div className="bg-gray-900 text-white h-screen w-64 p-5">
-      <ul>
-        <li className="mb-8">
-          <Link to="/home" className="flex items-center text-lg">
-            <FaHome className="mr-4 text-2xl" /> Inicio
-          </Link>
-        </li>
-        <li className="mb-8">
-          <button
-            onClick={toggleClientsMenu}
-            className="flex items-center text-lg w-full focus:outline-none"
-          >
-            <FaUserMd className="mr-4 text-2xl" /> Clientes
-            {isClientsMenuOpen ? (
-              <FaChevronUp className="ml-auto text-2xl" />
-            ) : (
-              <FaChevronDown className="ml-auto text-2xl" />
-            )}
-          </button>
-          {isClientsMenuOpen && (
-            <ul className="ml-8 mt-2">
-              <li className="mb-4">
-                <Link to="/veterinario/clients" className="flex items-center text-lg">
-                  <FaUser className="mr-4 text-2xl" /> Clientes
-                </Link>
-              </li>
-              <li className="mb-4">
-                <Link to="/clients/pets" className="flex items-center text-lg">
-                  <FaDog className="mr-4 text-2xl" /> Mascotas
-                </Link>
-              </li>
-              <li className="mb-4">
-                <Link to="/clients/list" className="flex items-center text-lg">
-                  <FaUserMd className="mr-4 text-2xl" /> Lista de Clientes
-                </Link>
-              </li>
-            </ul>
+    <div
+      className={`fixed top-0 left-0 h-full bg-cyan-600 text-white shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${
+        isOpen ? 'w-64' : 'w-16'
+      }`}
+    >
+      <div className="mt-16 p-4">
+        <ul>
+          <li className="mb-8 flex items-center">
+            <Link to="/home" className="flex items-center text-lg">
+              <FaHome className="text-2xl" />
+              <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Inicio</span>
+            </Link>
+          </li>
+          <li className="mb-8 flex items-center">
+            <Link to="/veterinario/clients" className="flex items-center text-lg">
+              <FaUserMd className="text-2xl" />
+              <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Clientes</span>
+            </Link>
+          </li>
+          <li className="mb-8 flex items-center">
+            <Link to="/veterinario/patients" className="flex items-center text-lg">
+              <FaDog className="text-2xl" /> {/* Ícono de perro */}
+              <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Pacientes</span>
+            </Link>
+          </li>
+          <li className="mb-8 flex items-center">
+            <Link to="/hospitalizacion" className="flex items-center text-lg">
+              <FaStethoscope className="text-2xl" />
+              <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Hospitalización</span>
+            </Link>
+          </li>
+          <li className="mb-8 flex items-center">
+            <Link to="/hospedaje" className="flex items-center text-lg">
+              <FaPaw className="text-2xl" />
+              <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Hospedaje</span>
+            </Link>
+          </li>
+          {user.role_id === 1 && (
+            <li className="mb-8 flex items-center">
+              <Link to="/admin" className="flex items-center text-lg">
+                <FaUserShield className="text-2xl" />
+                <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Administración</span>
+              </Link>
+            </li>
           )}
-        </li>
-        <li className="mb-8">
-          <Link
-            to="/admin"
-            className="flex items-center text-lg"
-            onClick={handleAdminClick}
-          >
-            <FaUserShield className="mr-4 text-2xl" /> Administración
-          </Link>
-        </li>
-      </ul>
-      {showAccessDenied && <AccesoDenegadoModal />}
+        </ul>
+      </div>
     </div>
   );
 };

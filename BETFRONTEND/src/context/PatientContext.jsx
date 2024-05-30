@@ -1,40 +1,42 @@
-import React, { createContext, useContext, useState } from 'react';
-import { getAllPatientsRequest, getPatientRequest, createPatientRequest, updatePatientRequest, deletePatientRequest } from '../api/patients.api';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import { getAllPatientsRequest, createPatientRequest, deletePatientRequest } from '../api/patients.api';
 
 const PatientContext = createContext();
 
-export const usePatient = () => useContext(PatientContext);
+export const usePatients = () => useContext(PatientContext);
 
 export const PatientProvider = ({ children }) => {
   const [patients, setPatients] = useState([]);
 
-  const fetchPatients = async () => {
-    const response = await getAllPatientsRequest();
-    setPatients(response.data);
-  };
+  const fetchPatients = useCallback(async () => {
+    try {
+      const response = await getAllPatientsRequest();
+      setPatients(response.data);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+    }
+  }, []);
 
-  const getPatient = async (id) => {
-    const response = await getPatientRequest(id);
-    return response.data;
-  };
+  const addPatient = useCallback(async (patient) => {
+    try {
+      const response = await createPatientRequest(patient);
+      setPatients((prevPatients) => [...prevPatients, response.data]);
+    } catch (error) {
+      console.error('Error adding patient:', error);
+    }
+  }, []);
 
-  const createPatient = async (patient) => {
-    await createPatientRequest(patient);
-    fetchPatients();
-  };
-
-  const updatePatient = async (id, patient) => {
-    await updatePatientRequest(id, patient);
-    fetchPatients();
-  };
-
-  const deletePatient = async (id) => {
-    await deletePatientRequest(id);
-    fetchPatients();
-  };
+  const deletePatient = useCallback(async (id) => {
+    try {
+      await deletePatientRequest(id);
+      setPatients((prevPatients) => prevPatients.filter(patient => patient.id !== id));
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+    }
+  }, []);
 
   return (
-    <PatientContext.Provider value={{ patients, fetchPatients, getPatient, createPatient, updatePatient, deletePatient }}>
+    <PatientContext.Provider value={{ patients, fetchPatients, addPatient, deletePatient }}>
       {children}
     </PatientContext.Provider>
   );

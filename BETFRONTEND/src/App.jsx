@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { ClientsProvider } from './context/ClientsContext';
 import { UserProvider } from './context/UserContext';
 import { ModalProvider } from './context/ModalContext';
+import { PatientProvider } from './context/PatientContext'; // Importa el PatientProvider
 
 import Navbar from './components/navbar/Navbar';
 import Sidebar from './components/sidebar/Sidebar';
-import { Container } from './components/ui/Container';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 import HomePage from './pages/HomePage';
@@ -18,20 +18,26 @@ import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
 import NotFound from './pages/NotFound';
 import ClientsListPage from './pages/ClientsListPage';
-import CreatePetPage from './pages/CreatePetPage'; // Importa la nueva página
+import CreatePetPage from './pages/CreatePetPage';
+import PatientsPage from './pages/PatientsPage'; // Asegúrate de que la ruta del archivo sea correcta
 
 function App() {
   const { isAuth, loading, user } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   if (loading) return <h1>Cargando ...</h1>;
 
   return (
     <ModalProvider>
-      <Navbar />
-      <div className="flex">
-        {isAuth && <Sidebar />}
-        <div className="flex-grow">
-          <Container className="py-5">
+      <div className="flex h-screen overflow-hidden">
+        {isAuth && <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />}
+        <div className={`flex flex-col flex-grow overflow-hidden transition-all duration-300 ${isAuth ? 'ml-64' : 'ml-0'}`}>
+          <Navbar toggleSidebar={toggleSidebar} />
+          <div className="flex-grow overflow-y-auto p-4 pt-16"> {/* Ajusta el padding-top */}
             <Routes>
               <Route element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/patients" />}>
                 <Route path="/login" element={<LoginPage />} />
@@ -42,7 +48,10 @@ function App() {
                 <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
                   <Route path="/home" element={<HomePage />} />
                   <Route path="/veterinario/clients" element={<ClientsPage />} />
-            <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
+                  <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
+                  <Route element={<PatientProvider><Outlet /></PatientProvider>}> {/* Envuelve con PatientProvider */}
+                    <Route path="/veterinario/patients" element={<PatientsPage />} /> {/* Nueva ruta para PatientsPage */}
+                  </Route>
                 </Route>
                 <Route path="/profile" element={<ProfilePage />} />
 
@@ -51,13 +60,11 @@ function App() {
                     <Route path="/admin" element={<AdminPage />} />
                   </Route>
                 </Route>
-
-                <Route path="/clients/list" element={<ClientsListPage />} /> {/* Nueva ruta */}
               </Route>
 
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </Container>
+          </div>
         </div>
       </div>
     </ModalProvider>
