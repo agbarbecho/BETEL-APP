@@ -1,20 +1,16 @@
+// CreatePetPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getClientRequest } from '../api/clients.api';
 import { getAllPatientsRequest, createPatientRequest } from '../api/patients.api';
+import PetsForm from './PetsForm';
 
 const CreatePetPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [client, setClient] = useState(null);
   const [patients, setPatients] = useState([]);
-  const [form, setForm] = useState({
-    name: '',
-    breed: '',
-    species: '',
-    weight: '',
-    client_id: id,
-  });
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   useEffect(() => {
     const fetchClient = async () => {
@@ -40,18 +36,8 @@ const CreatePetPage = () => {
     fetchPatients();
   }, [id]);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await createPatientRequest(form);
-      navigate(`/veterinario/clients/${id}`);
-    } catch (error) {
-      console.error('Error creating patient:', error);
-    }
+  const toggleFormVisibility = () => {
+    setIsFormVisible(!isFormVisible);
   };
 
   if (!client) {
@@ -91,7 +77,10 @@ const CreatePetPage = () => {
       <div className="md:w-2/3 p-4 bg-white shadow-md rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Pacientes</h2>
-          <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+          <button 
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+            onClick={toggleFormVisibility}
+          >
             + Nuevo Paciente
           </button>
         </div>
@@ -139,10 +128,14 @@ const CreatePetPage = () => {
             </tbody>
           </table>
         </div>
-     
       </div>
+
+      {isFormVisible && (
+        <PetsForm onClose={toggleFormVisibility} />
+      )}
     </div>
   );
 };
 
 export default CreatePetPage;
+

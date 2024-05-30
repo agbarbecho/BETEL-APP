@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePatients } from '../context/PatientContext'; // Asegúrate de que esta ruta es correcta
-import { FaPlus, FaEllipsisV, FaPaw, FaTrash, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import RegisterPatientModal from '../components/ui/clientes/RegisterPatientModal';
+import { usePatients } from '../context/PatientContext';
+import { FaPlus, FaEllipsisV, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import PetsForm from '../pages/PetsForm';
 import ContainerPatient from '../components/ui/clientes/ContainerPatient';
-import ReusableModal from '../components/modals/ReusableModal';
+import PetsModal from '../components/modals/PetsModal';
 
 const PatientsPage = () => {
-  const { patients, fetchPatients, deletePatient } = usePatients(); // Asegúrate de que el hook se utiliza correctamente
+  const { patients, fetchPatients, deletePatient } = usePatients();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,6 +22,7 @@ const PatientsPage = () => {
 
   const handleRegisterSuccess = () => {
     fetchPatients();
+    closeModal();
   };
 
   const openModal = () => {
@@ -49,12 +50,12 @@ const PatientsPage = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPage(1);
   };
 
   const handlePatientsPerPageChange = (event) => {
     setPatientsPerPage(Number(event.target.value));
-    setCurrentPage(1); // Reset to first page
+    setCurrentPage(1);
   };
 
   const filteredPatients = patients.filter(
@@ -167,7 +168,7 @@ const PatientsPage = () => {
                     {patient.age}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {patient.client_name} {/* Ajusta esto según tu esquema de datos */}
+                    {patient.client_name}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center justify-end">
@@ -203,11 +204,9 @@ const PatientsPage = () => {
           </table>
         </div>
       </div>
-      {isModalOpen && (
-        <ReusableModal isOpen={isModalOpen} onClose={closeModal}>
-          <RegisterPatientModal onClose={closeModal} onRegisterSuccess={handleRegisterSuccess} />
-        </ReusableModal>
-      )}
+      <PetsModal isOpen={isModalOpen} onClose={closeModal}>
+        <PetsForm onClose={closeModal} onRegisterSuccess={handleRegisterSuccess} />
+      </PetsModal>
       {isDeletedModalOpen && (
         <div className="fixed bottom-0 right-0 mb-4 mr-4 bg-green-500 text-white p-4 rounded">
           <p>Paciente eliminado exitosamente.</p>
