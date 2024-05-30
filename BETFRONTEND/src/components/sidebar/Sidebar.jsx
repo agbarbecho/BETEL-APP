@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaHome, FaUserMd, FaUserShield, FaPaw, FaStethoscope, FaDog } from "react-icons/fa"; // Importa el ícono de perro
+import { FaHome, FaUserMd, FaUserShield, FaPaw, FaStethoscope, FaDog, FaSyringe, FaFileMedical } from "react-icons/fa"; // Importa los íconos adicionales
 import { useAuth } from "../../context/AuthContext";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -27,7 +27,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </li>
           <li className="mb-8 flex items-center">
             <Link to="/veterinario/patients" className="flex items-center text-lg">
-              <FaDog className="text-2xl" /> {/* Ícono de perro */}
+              <FaDog className="text-2xl" />
               <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Pacientes</span>
             </Link>
           </li>
@@ -41,6 +41,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <Link to="/hospedaje" className="flex items-center text-lg">
               <FaPaw className="text-2xl" />
               <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Hospedaje</span>
+            </Link>
+          </li>
+          <li className="mb-8 flex items-center">
+            <Link to="/certificado-medico" className="flex items-center text-lg">
+              <FaFileMedical className="text-2xl" />
+              <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Certificado Médico</span>
+            </Link>
+          </li>
+          <li className="mb-8 flex items-center">
+            <Link to="/vacunacion" className="flex items-center text-lg">
+              <FaSyringe className="text-2xl" />
+              <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Vacunación</span>
             </Link>
           </li>
           {user.role_id === 1 && (
