@@ -18,9 +18,9 @@ import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
 import NotFound from './pages/NotFound';
 import CreatePetPage from './pages/CreatePetPage';
-import PatientsPage from './pages/PatientsPage'; // Asegúrate de que la ruta del archivo sea correcta
+import PatientsPage from './pages/PatientsPage';
 
-function App() {
+const App = () => {
   const { isAuth, loading, user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -32,42 +32,52 @@ function App() {
 
   return (
     <ModalProvider>
-      <div className="flex h-screen overflow-hidden">
-        {isAuth && <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />}
-        <div className={`flex flex-col flex-grow overflow-hidden transition-all duration-300 ${isAuth ? 'ml-64' : 'ml-0'}`}>
-          <Navbar toggleSidebar={toggleSidebar} />
-          <div className="flex-grow overflow-y-auto p-4 pt-16">
-            <Routes>
-              <Route element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/patients" />}>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-              </Route>
+      <Routes>
+        <Route element={<PublicLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Route>
 
-              <Route element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}>
-                <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
-                  <Route path="/home" element={<HomePage />} />
-                  <Route path="/veterinario/clients" element={<ClientsPage />} />
-                  <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
-                  <Route element={<PatientProvider><Outlet /></PatientProvider>}>
-                    <Route path="/veterinario/patients" element={<PatientsPage />} />
-                  </Route>
-                </Route>
-                <Route path="/profile" element={<ProfilePage />} />
-              </Route>
+        <Route element={<ProtectedLayout isAuth={isAuth} toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />}>
+          <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/veterinario/clients" element={<ClientsPage />} />
+            <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
+            <Route element={<PatientProvider><Outlet /></PatientProvider>}>
+              <Route path="/veterinario/patients" element={<PatientsPage />} />
+            </Route>
+          </Route>
+          <Route path="/profile" element={<ProfilePage />} />
 
-              <Route element={<ProtectedRoute isAllowed={user?.role_id === 1} redirectTo="/home" />}>
-                <Route element={<UserProvider><Outlet /></UserProvider>}>
-                  <Route path="/admin" element={<AdminPage />} />
-                </Route>
-              </Route>
+          <Route element={<ProtectedRoute isAllowed={user?.role_id === 1} redirectTo="/home" />}>
+            <Route element={<UserProvider><Outlet /></UserProvider>}>
+              <Route path="/admin" element={<AdminPage />} />
+            </Route>
+          </Route>
+        </Route>
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </div>
-      </div>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </ModalProvider>
   );
-}
+};
+
+const PublicLayout = () => (
+  <div className="flex h-screen w-screen overflow-hidden">
+    <Outlet />
+  </div>
+);
+
+const ProtectedLayout = ({ isAuth, toggleSidebar, sidebarOpen }) => (
+  <div className="flex h-screen overflow-hidden">
+    {isAuth && <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />}
+    <div className={`flex flex-col flex-grow overflow-hidden transition-all duration-300 ${isAuth ? 'ml-64' : 'ml-0'}`}>
+      {isAuth && <Navbar toggleSidebar={toggleSidebar} />}
+      <div className="flex-grow overflow-y-auto p-4 pt-16">
+        <Outlet />
+      </div>
+    </div>
+  </div>
+);
 
 export default App;

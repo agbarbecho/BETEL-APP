@@ -1,4 +1,4 @@
-import { Button, Card, Input, Label, Container } from "../components/ui";
+import { Button, Card, Input } from "../components/ui";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -25,8 +25,8 @@ function RegisterPage() {
       <div className="w-2/5 flex items-center justify-center h-full">
         <Card className="h-full w-full p-8">
           {signupErrors &&
-            signupErrors.map((err) => (
-              <p key={err} className="bg-red-500 text-white p-2 text-center">
+            signupErrors.map((err, index) => (
+              <p key={index} className="bg-red-500 text-white p-2 text-center">
                 {err}
               </p>
             ))}
@@ -34,9 +34,9 @@ function RegisterPage() {
           <h1 className="text-4xl font-bold my-10 text-center text-white">Registro de usuario</h1>
 
           <form onSubmit={onSubmit} className="space-y-4">
-            <label htmlFor="name" className="block text-white text-sm font-semibold">Nombre y Apellido</label>
+            <label htmlFor="name" className="block text-white text-sm font-semibold">Nombre</label>
             <Input
-              placeholder="Ingrese sus nombres"
+              placeholder="Ingrese su nombre"
               className="bg-gray-800 text-gray-300 w-full h-12 px-4 py-2"
               {...register("name", {
                 required: "Name is required",
@@ -44,6 +44,18 @@ function RegisterPage() {
             />
             {errors.name && (
               <p className="text-red-500">Name is required</p>
+            )}
+
+            <label htmlFor="lastname" className="block text-white text-sm font-semibold">Apellido</label>
+            <Input
+              placeholder="Ingrese su apellido"
+              className="bg-gray-800 text-gray-300 w-full h-12 px-4 py-2"
+              {...register("lastname", {
+                required: "Lastname is required",
+              })}
+            />
+            {errors.lastname && (
+              <p className="text-red-500">Lastname is required</p>
             )}
 
             <label htmlFor="email" className="block text-white text-sm font-semibold">Email</label>
@@ -75,7 +87,7 @@ function RegisterPage() {
             <Button className="bg-gray-600 text-white rounded-full hover:bg-blue-600 px-6 py-2 text-lg">Registrarse</Button>
 
             <div className="flex justify-between m-1 text-white">
-              <p>Ya tienes una cuenta?</p>
+              <p>¿Ya tienes una cuenta?</p>
               <Link to="/login" className="font-bold text-white">
                 Ingresar
               </Link>
