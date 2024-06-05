@@ -145,6 +145,21 @@ const PatientsPage = () => {
                   Edad
                 </th>
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Peso
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Fecha de Nacimiento
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Color
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Tamaño
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Estado Reproductivo
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Propietario
                 </th>
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -168,7 +183,22 @@ const PatientsPage = () => {
                     {patient.age}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {patient.client_name}
+                    {patient.weight}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {patient.birth_date}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {patient.color}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {patient.size}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {patient.reproductive_status}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    {patient.client_name || 'Sin propietario'}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center justify-end">

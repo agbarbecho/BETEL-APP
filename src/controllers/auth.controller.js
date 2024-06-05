@@ -41,16 +41,15 @@ export const signin = async (req, res) => {
 
 
 export const signup = async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, lastname, email, password } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const gravatar = `https://www.gravatar.com/avatar/${md5(email)}`;
 
-   
     const result = await pool.query(
-      "INSERT INTO users(name, email, password, gravatar, role_id) VALUES($1, $2, $3, $4, $5) RETURNING *",
-      [name, email, hashedPassword, gravatar, 3]
+      "INSERT INTO users(name, lastname, email, password, gravatar, role_id) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
+      [name, lastname, email, hashedPassword, gravatar, 3]
     );
 
     const token = await createAccessToken({
@@ -75,7 +74,6 @@ export const signup = async (req, res, next) => {
     next(error);
   }
 };
-
 export const signout = (req, res) => {
   res.clearCookie("token");
   res.sendStatus(200);

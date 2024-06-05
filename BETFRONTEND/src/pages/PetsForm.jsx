@@ -1,32 +1,44 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { createPatientRequest } from '../api/patients.api';
 
-const PetsForm = ({ onClose, onRegisterSuccess }) => {
+const PetsForm = ({ onClose, onRegisterSuccess, clientId }) => {
   const [nombre, setNombre] = useState('');
   const [genero, setGenero] = useState('');
-  const [esteril, setEsteril] = useState(false);
+  const [estadoReproductivo, setEstadoReproductivo] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
-  const [edadDias, setEdadDias] = useState(0);
-  const [edadMeses, setEdadMeses] = useState(0);
-  const [edadAnos, setEdadAnos] = useState(0);
   const [color, setColor] = useState('');
   const [raza, setRaza] = useState('');
   const [especie, setEspecie] = useState('');
   const [club, setClub] = useState('');
-  const [peso, setPeso] = useState(0);
+  const [peso, setPeso] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const birthDateObject = new Date(fechaNacimiento);
+    const weightNumber = parseFloat(peso);
+
+    const patientData = {
+      name: nombre,
+      breed: raza,
+      species: especie,
+      weight: weightNumber,
+      birth_date: birthDateObject,
+      color,
+      size: club,
+      reproductive_status: estadoReproductivo,
+      client_id: parseInt(clientId, 10),
+    };
+
+    console.log('Enviando datos del paciente:', patientData);
     try {
-      const response = await axios.post('/api/mascotas', {
-        nombre, genero, esteril, fecha_nacimiento: fechaNacimiento, edad_dias: edadDias,
-        edad_meses: edadMeses, edad_anos: edadAnos, color, raza, especie, club, peso
-      });
+      const response = await createPatientRequest(patientData);
       console.log('Mascota creada:', response.data);
-      onRegisterSuccess(); // Llama a la función para refrescar la lista de pacientes
-      onClose(); // Cierra el formulario después de enviar
+      onRegisterSuccess();
+      onClose();
     } catch (error) {
-      console.error('Error creando mascota:', error);
+      console.error('Error creando mascota:', error.response?.data || error.message);
+      setError(error.response?.data || error.message);
     }
   };
 
@@ -36,6 +48,7 @@ const PetsForm = ({ onClose, onRegisterSuccess }) => {
         <div className="border-t-4 border-cyan-500 rounded-t-lg">
           <form onSubmit={handleSubmit} className="p-4">
             <h2 className="text-2xl font-bold mb-4 text-center">Registrar Mascota</h2>
+            {error && <div className="text-red-500 mb-4">{JSON.stringify(error)}</div>}
             <div className="flex justify-center mb-4">
               <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
                 <span className="text-gray-500">Foto</span>
@@ -143,6 +156,9 @@ const PetsForm = ({ onClose, onRegisterSuccess }) => {
                 <label htmlFor="talla" className="block text-gray-700 font-bold mb-1">Talla</label>
                 <select
                   id="talla"
+                  value={club}
+                  onChange={(e) => setClub(e.target.value)}
+                  required
                   className="w-full px-3 py-2 border rounded-full"
                 >
                   <option value="">Seleccione una opción</option>
@@ -155,6 +171,9 @@ const PetsForm = ({ onClose, onRegisterSuccess }) => {
                 <label htmlFor="estadoReproductivo" className="block text-gray-700 font-bold mb-1">Estado Reproductivo</label>
                 <select
                   id="estadoReproductivo"
+                  value={estadoReproductivo}
+                  onChange={(e) => setEstadoReproductivo(e.target.value)}
+                  required
                   className="w-full px-3 py-2 border rounded-full"
                 >
                   <option value="">Seleccione estado</option>
@@ -175,4 +194,3 @@ const PetsForm = ({ onClose, onRegisterSuccess }) => {
 };
 
 export default PetsForm;
-

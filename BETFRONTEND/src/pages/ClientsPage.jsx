@@ -158,7 +158,12 @@ const ClientsPage = () => {
               {currentClients.map((client) => (
                 <tr key={client.id}>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {client.full_name}
+                    <button
+                      onClick={() => handleViewProfile(client.id)}
+                      className="text-blue-500 hover:underline"
+                    >
+                      {client.full_name}
+                    </button>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     {client.cedula}

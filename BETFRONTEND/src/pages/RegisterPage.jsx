@@ -1,4 +1,3 @@
-// src/pages/RegisterPage.jsx
 import { Button, Card, Input, Label, Container } from "../components/ui";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,9 +21,9 @@ function RegisterPage() {
   });
 
   return (
-    <div className="flex justify-between h-screen">
-      <div className="w-1/4 flex items-center justify-center h-full">
-        <Card className="h-full">
+    <div className="flex h-screen overflow-hidden">
+      <div className="w-2/5 flex items-center justify-center h-full">
+        <Card className="h-full w-full p-8">
           {signupErrors &&
             signupErrors.map((err) => (
               <p key={err} className="bg-red-500 text-white p-2 text-center">
@@ -84,7 +83,7 @@ function RegisterPage() {
           </form>
         </Card>
       </div>
-      <div className="w-3/4 ml-10 my-0 relative">
+      <div className="w-3/5 relative">
         <img
           src="https://app.okvet.co/assets/media/bg/bg-okvet.jpg"
           alt="Background"
