@@ -1,4 +1,3 @@
-// CreatePetPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getClientRequest } from '../api/clients.api';
@@ -6,7 +5,7 @@ import { getAllPatientsRequest, createPatientRequest } from '../api/patients.api
 import PetsForm from './PetsForm';
 
 const CreatePetPage = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // `id` es el `clientId`
   const navigate = useNavigate();
   const [client, setClient] = useState(null);
   const [patients, setPatients] = useState([]);
@@ -35,6 +34,13 @@ const CreatePetPage = () => {
     fetchClient();
     fetchPatients();
   }, [id]);
+
+  const handleRegisterSuccess = async () => {
+    const response = await getAllPatientsRequest();
+    const clientPatients = response.data.filter(patient => patient.client_id === parseInt(id));
+    setPatients(clientPatients);
+    setIsFormVisible(false);
+  };
 
   const toggleFormVisibility = () => {
     setIsFormVisible(!isFormVisible);
@@ -131,11 +137,10 @@ const CreatePetPage = () => {
       </div>
 
       {isFormVisible && (
-        <PetsForm onClose={toggleFormVisibility} />
+        <PetsForm onClose={toggleFormVisibility} onRegisterSuccess={handleRegisterSuccess} clientId={id} />
       )}
     </div>
   );
 };
 
 export default CreatePetPage;
-

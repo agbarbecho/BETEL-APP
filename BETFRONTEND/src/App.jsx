@@ -4,7 +4,7 @@ import { useAuth } from './context/AuthContext';
 import { ClientsProvider } from './context/ClientsContext';
 import { UserProvider } from './context/UserContext';
 import { ModalProvider } from './context/ModalContext';
-import { PatientProvider } from './context/PatientContext'; // Importa el PatientProvider
+import { PatientProvider } from './context/PatientContext';
 
 import Navbar from './components/navbar/Navbar';
 import Sidebar from './components/sidebar/Sidebar';
@@ -17,7 +17,6 @@ import ClientsPage from './pages/ClientsPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
 import NotFound from './pages/NotFound';
-import ClientsListPage from './pages/ClientsListPage';
 import CreatePetPage from './pages/CreatePetPage';
 import PatientsPage from './pages/PatientsPage'; // Asegúrate de que la ruta del archivo sea correcta
 
@@ -37,7 +36,7 @@ function App() {
         {isAuth && <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />}
         <div className={`flex flex-col flex-grow overflow-hidden transition-all duration-300 ${isAuth ? 'ml-64' : 'ml-0'}`}>
           <Navbar toggleSidebar={toggleSidebar} />
-          <div className="flex-grow overflow-y-auto p-4 pt-16"> {/* Ajusta el padding-top */}
+          <div className="flex-grow overflow-y-auto p-4 pt-16">
             <Routes>
               <Route element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/patients" />}>
                 <Route path="/login" element={<LoginPage />} />
@@ -49,16 +48,16 @@ function App() {
                   <Route path="/home" element={<HomePage />} />
                   <Route path="/veterinario/clients" element={<ClientsPage />} />
                   <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
-                  <Route element={<PatientProvider><Outlet /></PatientProvider>}> {/* Envuelve con PatientProvider */}
-                    <Route path="/veterinario/patients" element={<PatientsPage />} /> {/* Nueva ruta para PatientsPage */}
+                  <Route element={<PatientProvider><Outlet /></PatientProvider>}>
+                    <Route path="/veterinario/patients" element={<PatientsPage />} />
                   </Route>
                 </Route>
                 <Route path="/profile" element={<ProfilePage />} />
+              </Route>
 
-                <Route element={<ProtectedRoute isAllowed={user?.role_id === 1} redirectTo="/home" />}>
-                  <Route element={<UserProvider><Outlet /></UserProvider>}>
-                    <Route path="/admin" element={<AdminPage />} />
-                  </Route>
+              <Route element={<ProtectedRoute isAllowed={user?.role_id === 1} redirectTo="/home" />}>
+                <Route element={<UserProvider><Outlet /></UserProvider>}>
+                  <Route path="/admin" element={<AdminPage />} />
                 </Route>
               </Route>
 
