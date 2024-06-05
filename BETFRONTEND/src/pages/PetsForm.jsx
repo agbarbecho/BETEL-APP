@@ -32,7 +32,7 @@ const PetsForm = ({ onClose, onRegisterSuccess }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 overflow-y-auto">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl m-4">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl m-4 mt-16">
         <div className="border-t-4 border-cyan-500 rounded-t-lg">
           <form onSubmit={handleSubmit} className="p-4">
             <h2 className="text-2xl font-bold mb-4 text-center">Registrar Mascota</h2>
@@ -175,4 +175,5 @@ const PetsForm = ({ onClose, onRegisterSuccess }) => {
 };
 
 export default PetsForm;
+
 
