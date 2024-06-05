@@ -1,12 +1,28 @@
+// src/pages/HomePage.jsx
 import React, { useState, useEffect } from 'react';
-import { FaLaptopMedical, FaStethoscope, FaNotesMedical, FaSyringe, FaMicroscope, FaPills, FaCut, FaHospitalAlt, FaUserMd, FaDog, FaHome } from 'react-icons/fa';
+import {
+  FaLaptopMedical,
+  FaStethoscope,
+  FaNotesMedical,
+  FaSyringe,
+  FaMicroscope,
+  FaPills,
+  FaCut,
+  FaHospitalAlt,
+  FaUserMd,
+  FaDog,
+  FaHome
+} from 'react-icons/fa';
 import ReusableModal from '../components/modals/ReusableModal';
+import PreHospitalizacionModal from '../components/modals/PreHospitalizacionModal';
+import PreHospitalizacionForm from '../pages/PreHospitalizacionForm';
 import { useClients } from '../context/ClientsContext';
 import useSearchFilter from '../components/hooks/useSearchFilter';
 
 const HomePage = () => {
   const { clients, fetchClients } = useClients();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPreHospModalOpen, setIsPreHospModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
 
   const { searchTerm, setSearchTerm, filteredData: filteredClients } = useSearchFilter(clients, ['full_name']);
@@ -36,7 +52,22 @@ const HomePage = () => {
 
   const handleClientSelect = (client) => {
     setSelectedClient(client);
-    closeModal();
+    setIsModalOpen(false);
+  };
+
+  const handleContinue = () => {
+    setIsPreHospModalOpen(true);
+  };
+
+  const closePreHospModal = () => {
+    setIsPreHospModalOpen(false);
+    setSelectedClient(null);
+  };
+
+  const handleRegisterSuccess = () => {
+    console.log('Registro exitoso');
+    setIsPreHospModalOpen(false);
+    setSelectedClient(null);
   };
 
   return (
@@ -63,7 +94,7 @@ const HomePage = () => {
             </div>
             <button
               className="bg-green-500 text-white px-4 py-2 rounded ml-4 hover:bg-green-700"
-              onClick={() => console.log('Continuar con el cliente:', selectedClient)}
+              onClick={handleContinue}
             >
               Continuar
             </button>
@@ -110,8 +141,16 @@ const HomePage = () => {
           </button>
         }
       />
+      <PreHospitalizacionModal
+        isOpen={isPreHospModalOpen}
+        onClose={closePreHospModal}
+      >
+        <PreHospitalizacionForm onClose={closePreHospModal} onRegisterSuccess={handleRegisterSuccess} />
+      </PreHospitalizacionModal>
     </div>
   );
 };
 
 export default HomePage;
+
+
