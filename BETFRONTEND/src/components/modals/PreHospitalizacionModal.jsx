@@ -6,7 +6,7 @@ const PreHospitalizacionModal = ({ isOpen, onClose, children }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-container">
+      <div className="modal-container relative">
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -20,5 +20,7 @@ const PreHospitalizacionModal = ({ isOpen, onClose, children }) => {
 };
 
 export default PreHospitalizacionModal;
+
+
 
 
