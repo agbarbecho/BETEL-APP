@@ -58,10 +58,16 @@ const PatientsPage = () => {
     setCurrentPage(1);
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+  };
+
   const filteredPatients = patients.filter(
     (patient) =>
       patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.breed.toLowerCase().includes(searchTerm.toLowerCase())
+      patient.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.client_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastPatient = currentPage * patientsPerPage;
@@ -142,9 +148,6 @@ const PatientsPage = () => {
                   Raza
                 </th>
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Edad
-                </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Peso
                 </th>
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -180,13 +183,10 @@ const PatientsPage = () => {
                     {patient.breed}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {patient.age}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     {patient.weight}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {patient.birth_date}
+                    {formatDate(patient.birth_date)}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     {patient.color}
@@ -235,7 +235,7 @@ const PatientsPage = () => {
         </div>
       </div>
       <PetsModal isOpen={isModalOpen} onClose={closeModal}>
-        <PetsForm onClose={closeModal} onRegisterSuccess={handleRegisterSuccess} />
+        <PetsForm onClose={closeModal} onRegisterSuccess={handleRegisterSuccess} clientId={1} />
       </PetsModal>
       {isDeletedModalOpen && (
         <div className="fixed bottom-0 right-0 mb-4 mr-4 bg-green-500 text-white p-4 rounded">

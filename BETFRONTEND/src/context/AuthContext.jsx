@@ -23,14 +23,13 @@ export function AuthProvider({ children }) {
       const res = await axios.post("/signin", data);
       setUser(res.data);
       setIsAuth(true);
-
       return res.data;
     } catch (error) {
-      if (Array.isArray(error.response.data)) {
-        return setErrors(error.response.data);
+      const errorMessage = error.response?.data?.message || "Something went wrong";
+      if (Array.isArray(error.response?.data)) {
+        return setErrors(error.response.data.map(err => err.message));
       }
-
-      setErrors([error.response.data.message]);
+      setErrors([errorMessage]);
     }
   };
 
@@ -38,16 +37,14 @@ export function AuthProvider({ children }) {
     try {
       const res = await axios.post("/signup", data);
       setUser(res.data);
-      setUser(res.data);
       setIsAuth(true);
-
       return res.data;
     } catch (error) {
-      if (Array.isArray(error.response.data)) {
-        return setErrors(error.response.data);
+      const errorMessage = error.response?.data?.message || "Something went wrong";
+      if (Array.isArray(error.response?.data)) {
+        return setErrors(error.response.data.map(err => err.message));
       }
-
-      setErrors([error.response.data.message]);
+      setErrors([errorMessage]);
     }
   };
 
@@ -71,17 +68,16 @@ export function AuthProvider({ children }) {
           setIsAuth(false);
         });
     }
-    
     setLoading(false);
   }, []);
 
   useEffect(() => {
     const clean = setTimeout(() => {
-      setErrors(null);      
+      setErrors(null);
     }, 5000);
 
     return () => clearTimeout(clean);
-  }, [errors])
+  }, [errors]);
 
   return (
     <AuthContext.Provider

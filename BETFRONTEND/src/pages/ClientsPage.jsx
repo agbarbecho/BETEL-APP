@@ -5,6 +5,7 @@ import { FaPlus, FaEllipsisV, FaUser, FaTrash, FaChevronLeft, FaChevronRight } f
 import RegisterClientModal from '../components/ui/clientes/RegisterClientModal';
 import ContainerClient from '../components/ui/clientes/ContainerClient';
 import ReusableModal from '../components/modals/ReusableModal';
+import PetsDropdown from '../components/ui/clientes/PetsDropdown'; // Ajusta la ruta si es necesario
 
 const ClientsPage = () => {
   const { clients, fetchClients, deleteClient } = useClients();
@@ -59,7 +60,7 @@ const ClientsPage = () => {
 
   const filteredClients = clients.filter(
     (client) =>
-      client.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       client.cedula.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -147,6 +148,9 @@ const ClientsPage = () => {
                   Email
                 </th>
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Mascotas
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Fecha de Creación
                 </th>
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -156,63 +160,68 @@ const ClientsPage = () => {
             </thead>
             <tbody>
               {currentClients.map((client) => (
-                <tr key={client.id}>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <button
-                      onClick={() => handleViewProfile(client.id)}
-                      className="text-blue-500 hover:underline"
-                    >
-                      {client.full_name}
-                    </button>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {client.cedula}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {client.phone}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {client.address}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {client.email}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {new Date(client.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <div className="relative">
+                <React.Fragment key={client.client_id}>
+                  <tr className="hover:bg-gray-100">
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <button
-                        onClick={() => toggleDropdown(client.id)}
-                        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 flex items-center"
+                        onClick={() => handleViewProfile(client.client_id)}
+                        className="text-blue-500 hover:underline"
                       >
-                        <FaEllipsisV />
+                        {client.client_name}
                       </button>
-                      {isDropdownOpen === client.id && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
-                          <ul>
-                            <li
-                              className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
-                              onClick={() => handleViewProfile(client.id)}
-                            >
-                              <FaUser className="mr-2" />
-                              Ver Perfil
-                            </li>
-                            <li
-                              onClick={() => {
-                                handleDeleteClient(client.id);
-                              }}
-                              className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
-                            >
-                              <FaTrash className="mr-2" />
-                              Eliminar
-                            </li>
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      {client.cedula}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      {client.phone}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      {client.address}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      {client.email}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <PetsDropdown pets={client.pets} />
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      {new Date(client.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <div className="relative">
+                        <button
+                          onClick={() => toggleDropdown(client.client_id)}
+                          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 flex items-center"
+                        >
+                          <FaEllipsisV />
+                        </button>
+                        {isDropdownOpen === client.client_id && (
+                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+                            <ul>
+                              <li
+                                className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                                onClick={() => handleViewProfile(client.client_id)}
+                              >
+                                <FaUser className="mr-2" />
+                                Ver Perfil
+                              </li>
+                              <li
+                                onClick={() => {
+                                  handleDeleteClient(client.client_id);
+                                }}
+                                className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                              >
+                                <FaTrash className="mr-2" />
+                                Eliminar
+                              </li>
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                </React.Fragment>
               ))}
             </tbody>
           </table>

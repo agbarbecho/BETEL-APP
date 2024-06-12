@@ -1,7 +1,9 @@
-// src/components/forms/PreHospitalizacionForm.js
+// src/pages/PreHospitalizacionForm.jsx
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useHospitalizacion } from '../context/HospitalizacionContext';
 
-const PreHospitalizacionForm = ({ onClose, onRegisterSuccess }) => {
+const PreHospitalizacionForm = ({ onClose }) => {
   const [fechaIngreso, setFechaIngreso] = useState('');
   const [diasHospitalizacion, setDiasHospitalizacion] = useState('');
   const [tipoPaciente, setTipoPaciente] = useState('');
@@ -12,10 +14,12 @@ const PreHospitalizacionForm = ({ onClose, onRegisterSuccess }) => {
   const [dietaPaciente, setDietaPaciente] = useState('');
   const [incluirCobro, setIncluirCobro] = useState('');
 
+  const navigate = useNavigate();
+  const { setHospitalizacionData } = useHospitalizacion();
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Lógica para manejar el envío del formulario
-    console.log({
+    const data = {
       fechaIngreso,
       diasHospitalizacion,
       tipoPaciente,
@@ -25,9 +29,9 @@ const PreHospitalizacionForm = ({ onClose, onRegisterSuccess }) => {
       observaciones,
       dietaPaciente,
       incluirCobro,
-    });
-    onRegisterSuccess(); // Llama a la función para indicar éxito en el registro
-    onClose(); // Cierra el formulario después de enviar
+    };
+    setHospitalizacionData(data); // Almacena los datos en el contexto
+    navigate('/detalles-hospitalizacion'); // Redirige a la página de detalles de hospitalización
   };
 
   return (

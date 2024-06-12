@@ -27,7 +27,7 @@ function LoginPage() {
             {loginErrors &&
               loginErrors.map((err, index) => (
                 <p key={index} className="bg-red-500 text-white p-2 text-center rounded">
-                  {err}
+                  {typeof err === 'object' ? err.message : err}
                 </p>
               ))}
 

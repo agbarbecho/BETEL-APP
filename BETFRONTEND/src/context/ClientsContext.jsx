@@ -1,4 +1,3 @@
-// src/context/ClientsContext.jsx
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { getAllClientsRequest, createClientRequest, deleteClientRequest } from '../api/clients.api';
 

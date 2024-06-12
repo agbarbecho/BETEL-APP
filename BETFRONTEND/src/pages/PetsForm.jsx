@@ -9,13 +9,13 @@ const PetsForm = ({ onClose, onRegisterSuccess, clientId }) => {
   const [color, setColor] = useState('');
   const [raza, setRaza] = useState('');
   const [especie, setEspecie] = useState('');
-  const [club, setClub] = useState('');
+  const [talla, setTalla] = useState('');
   const [peso, setPeso] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const birthDateObject = new Date(fechaNacimiento);
+    const birthDateFormatted = new Date(fechaNacimiento).toISOString().split('T')[0]; // Formatear a YYYY-MM-DD
     const weightNumber = parseFloat(peso);
 
     const patientData = {
@@ -23,9 +23,9 @@ const PetsForm = ({ onClose, onRegisterSuccess, clientId }) => {
       breed: raza,
       species: especie,
       weight: weightNumber,
-      birth_date: birthDateObject,
+      birth_date: birthDateFormatted,
       color,
-      size: club,
+      size: talla,
       reproductive_status: estadoReproductivo,
       client_id: parseInt(clientId, 10),
     };
@@ -156,8 +156,8 @@ const PetsForm = ({ onClose, onRegisterSuccess, clientId }) => {
                 <label htmlFor="talla" className="block text-gray-700 font-bold mb-1">Talla</label>
                 <select
                   id="talla"
-                  value={club}
-                  onChange={(e) => setClub(e.target.value)}
+                  value={talla}
+                  onChange={(e) => setTalla(e.target.value)}
                   required
                   className="w-full px-3 py-2 border rounded-full"
                 >
@@ -194,5 +194,3 @@ const PetsForm = ({ onClose, onRegisterSuccess, clientId }) => {
 };
 
 export default PetsForm;
-
-

@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from 'cors';
 
 import authRoutes from "./routes/auth.routes.js";
-import clientRoutes from "./routes/client.routes.js"; // Importa las rutas de clientes
+import clientRoutes from "./routes/client.routes.js"; 
 import patientRoutes from "./routes/patient.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import { isAuth, isAdmin, isVeterinarian, isAdminOrVeterinarian } from "./middlewares/auth.middleware.js";

@@ -1,9 +1,22 @@
 import { pool } from "../db.js";
 
-// Obtener todos los clientes
+// Obtener todos los clientes con sus mascotas
 export const getAllClients = async (req, res, next) => {
   try {
-    const result = await pool.query("SELECT id, full_name, email, phone, cedula, address, created_at FROM clients");
+    const result = await pool.query(`
+      SELECT 
+        c.id as client_id, 
+        c.full_name as client_name, 
+        c.cedula, 
+        c.phone, 
+        c.address, 
+        c.email, 
+        c.created_at, 
+        json_agg(json_build_object('pet_name', p.name)) as pets
+      FROM clients c
+      LEFT JOIN patients p ON c.id = p.client_id
+      GROUP BY c.id
+    `);
     res.json(result.rows);
   } catch (error) {
     next(error);

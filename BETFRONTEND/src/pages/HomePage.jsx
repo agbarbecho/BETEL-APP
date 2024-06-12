@@ -17,19 +17,32 @@ import ReusableModal from '../components/modals/ReusableModal';
 import PreHospitalizacionModal from '../components/modals/PreHospitalizacionModal';
 import PreHospitalizacionForm from '../pages/PreHospitalizacionForm';
 import { useClients } from '../context/ClientsContext';
-import useSearchFilter from '../components/hooks/useSearchFilter';
+import { usePatients } from '../context/PatientContext';
+import useSearchFilter from '../components/hooks/useSearchFilter'; // Asegúrate de que esta ruta sea correcta
 
 const HomePage = () => {
   const { clients, fetchClients } = useClients();
+  const { patients, fetchPatients } = usePatients();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPreHospModalOpen, setIsPreHospModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
 
-  const { searchTerm, setSearchTerm, filteredData: filteredClients } = useSearchFilter(clients, ['full_name']);
+  // Combinando datos de clientes y pacientes
+  const combinedData = patients.map(patient => {
+    const client = clients.find(c => c.id === patient.client_id);
+    return {
+      ...patient,
+      clientFullName: client.full_name,
+      clientCedula: client.cedula
+    };
+  });
+
+  const { searchTerm, setSearchTerm, filteredData: filteredPatients } = useSearchFilter(combinedData, ['name', 'clientFullName', 'clientCedula']);
 
   useEffect(() => {
     fetchClients();
-  }, [fetchClients]);
+    fetchPatients();
+  }, [fetchClients, fetchPatients]);
 
   const sections = [
     { name: 'Consulta Virtual', icon: <FaLaptopMedical />, color: 'bg-red-400' },
@@ -109,22 +122,22 @@ const HomePage = () => {
           <div>
             <input
               type="text"
-              placeholder="Buscar por nombre del cliente"
+              placeholder="Buscar por nombre del cliente o mascota"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-gray-300 rounded px-4 py-2 w-full mb-4"
             />
             {searchTerm && (
               <div>
-                {filteredClients.length > 0 ? (
+                {filteredPatients.length > 0 ? (
                   <ul>
-                    {filteredClients.map((client) => (
+                    {filteredPatients.map((patient) => (
                       <li
-                        key={client.id}
+                        key={patient.id}
                         className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded"
-                        onClick={() => handleClientSelect(client)}
+                        onClick={() => handleClientSelect(patient)}
                       >
-                        {client.full_name} ({client.cedula})
+                        {patient.name} - {patient.clientFullName} ({patient.clientCedula})
                       </li>
                     ))}
                   </ul>
@@ -152,5 +165,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
