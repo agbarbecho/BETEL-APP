@@ -1,4 +1,4 @@
-// src/controllers/hospitalizationsController.js
+
 import { pool } from "../db.js";
 import { createHospitalizationSchema, updateHospitalizationSchema } from "../schemas/hospitalization.schema.js";
 
