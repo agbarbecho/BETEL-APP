@@ -33,16 +33,16 @@ const HomePage = () => {
   }, [fetchClients]);
 
   const sections = [
-    { name: 'Consulta Virtual', icon: <FaLaptopMedical />, color: 'bg-red-400' },
+    //{ name: 'Consulta Virtual', icon: <FaLaptopMedical />, color: 'bg-red-400' },
     { name: 'Consulta Médica', icon: <FaStethoscope />, color: 'bg-pink-400' },
-    { name: 'Consulta Rápida', icon: <FaNotesMedical />, color: 'bg-red-400' },
-    { name: 'Control Consulta', icon: <FaNotesMedical />, color: 'bg-yellow-400' },
+    //{ name: 'Consulta Rápida', icon: <FaNotesMedical />, color: 'bg-red-400' },
+    //{ name: 'Control Consulta', icon: <FaNotesMedical />, color: 'bg-yellow-400' },
     { name: 'Exámenes', icon: <FaMicroscope />, color: 'bg-yellow-400' },
     { name: 'Vacunación', icon: <FaSyringe />, color: 'bg-teal-400' },
     { name: 'Desparasitacion', icon: <FaPills />, color: 'bg-green-400' },
-    { name: 'Baño o Corte', icon: <FaCut />, color: 'bg-blue-400' },
-    { name: 'Guardería', icon: <FaHome />, color: 'bg-blue-400' },
-    { name: 'Cirugía', icon: <FaUserMd />, color: 'bg-yellow-400' },
+    //{ name: 'Baño o Corte', icon: <FaCut />, color: 'bg-blue-400' },
+    { name: 'Hospedaje', icon: <FaHome />, color: 'bg-blue-400' },
+    //{ name: 'Cirugía', icon: <FaUserMd />, color: 'bg-yellow-400' },
     { name: 'Hospitalización', icon: <FaHospitalAlt />, color: 'bg-yellow-400', onClick: () => setIsModalOpen(true) },
     { name: 'Certificado Médico', icon: <FaDog />, color: 'bg-green-400' },
   ];

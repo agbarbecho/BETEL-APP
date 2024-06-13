@@ -7,6 +7,7 @@ import { UserProvider } from './context/UserContext';
 import { ModalProvider } from './context/ModalContext';
 import { PatientProvider } from './context/PatientContext';
 import { HospitalizacionProvider } from './context/HospitalizacionContext';
+import { HospedajeProvider } from './context/HospedajeContext';
 
 import Navbar from './components/navbar/Navbar';
 import Sidebar from './components/sidebar/Sidebar';
@@ -24,6 +25,7 @@ import PatientsPage from './pages/PatientsPage';
 import PreHospitalizacionForm from './pages/PreHospitalizacionForm';
 import DetalleHospitalizacion from './pages/DetalleHospitalizacion';
 import HospitalizationsPage from './pages/HospitalizationsPage';
+import HospedajePage from './pages/HospedajePage';
 
 const App = () => {
   const { isAuth, loading, user } = useAuth();
@@ -38,35 +40,40 @@ const App = () => {
   return (
     <ModalProvider>
       <HospitalizacionProvider>
-        <Routes>
-          <Route element={<PublicLayout />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-          </Route>
-
-          <Route element={<ProtectedLayout isAuth={isAuth} toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />}>
-            <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/veterinario/clients" element={<ClientsPage />} />
-              <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
-              <Route element={<PatientProvider><Outlet /></PatientProvider>}>
-                <Route path="/veterinario/patients" element={<PatientsPage />} />
+        <HospedajeProvider>
+          <ClientsProvider>
+            <Routes>
+              <Route element={<PublicLayout />}>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
               </Route>
-              <Route path="/veterinario/hospitalizations" element={<HospitalizationsPage />} />
-            </Route>
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/prehospitalizacion" element={<PreHospitalizacionForm />} />
-            <Route path="/detalles-hospitalizacion/:id" element={<DetalleHospitalizacion />} />
 
-            <Route element={<ProtectedRoute isAllowed={user?.role_id === 1} redirectTo="/home" />}>
-              <Route element={<UserProvider><Outlet /></UserProvider>}>
-                <Route path="/admin" element={<AdminPage />} />
+              <Route element={<ProtectedLayout isAuth={isAuth} toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />}>
+                <Route element={<Outlet />}>
+                  <Route path="/home" element={<HomePage />} />
+                  <Route path="/veterinario/clients" element={<ClientsPage />} />
+                  <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
+                  <Route element={<PatientProvider><Outlet /></PatientProvider>}>
+                    <Route path="/veterinario/patients" element={<PatientsPage />} />
+                  </Route>
+                  <Route path="/veterinario/hospitalizations" element={<HospitalizationsPage />} />
+                  <Route path="/hospedaje" element={<HospedajePage />} />
+                </Route>
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/prehospitalizacion" element={<PreHospitalizacionForm />} />
+                <Route path="/detalles-hospitalizacion/:id" element={<DetalleHospitalizacion />} />
+
+                <Route element={<ProtectedRoute isAllowed={user?.role_id === 1} redirectTo="/home" />}>
+                  <Route element={<UserProvider><Outlet /></UserProvider>}>
+                    <Route path="/admin" element={<AdminPage />} />
+                  </Route>
+                </Route>
               </Route>
-            </Route>
-          </Route>
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ClientsProvider>
+        </HospedajeProvider>
       </HospitalizacionProvider>
     </ModalProvider>
   );
@@ -91,3 +98,5 @@ const ProtectedLayout = ({ isAuth, toggleSidebar, sidebarOpen }) => (
 );
 
 export default App;
+
+
