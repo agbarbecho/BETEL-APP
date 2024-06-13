@@ -1,4 +1,3 @@
-// src/context/HospitalizacionContext.jsx
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { 
   getAllHospitalizationsRequest, 

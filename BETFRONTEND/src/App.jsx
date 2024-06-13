@@ -52,7 +52,7 @@ const App = () => {
               <Route element={<PatientProvider><Outlet /></PatientProvider>}>
                 <Route path="/veterinario/patients" element={<PatientsPage />} />
               </Route>
-              <Route path="/veterinario/hospitalizations" element={<HospitalizationsPage />} />
+              <Route path="/veterinario/hospitalization" element={<HospitalizationsPage />} />
             </Route>
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/prehospitalizacion" element={<PreHospitalizacionForm />} />
