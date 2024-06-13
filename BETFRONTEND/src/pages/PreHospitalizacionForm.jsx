@@ -3,35 +3,42 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHospitalizacion } from '../context/HospitalizacionContext';
 
-const PreHospitalizacionForm = ({ onClose }) => {
-  const [fechaIngreso, setFechaIngreso] = useState('');
-  const [diasHospitalizacion, setDiasHospitalizacion] = useState('');
-  const [tipoPaciente, setTipoPaciente] = useState('');
-  const [tipoHospitalizacion, setTipoHospitalizacion] = useState('');
-  const [pronostico, setPronostico] = useState('');
-  const [pertenencias, setPertenencias] = useState('');
-  const [observaciones, setObservaciones] = useState('');
-  const [dietaPaciente, setDietaPaciente] = useState('');
-  const [incluirCobro, setIncluirCobro] = useState('');
+const PreHospitalizacionForm = ({ onClose, onRegisterSuccess, selectedPatientId }) => {
+  const [admissionDate, setAdmissionDate] = useState('');
+  const [estimatedDays, setEstimatedDays] = useState('');
+  const [patientType, setPatientType] = useState('');
+  const [hospitalizationType, setHospitalizationType] = useState('');
+  const [prognosis, setPrognosis] = useState('');
+  const [belongings, setBelongings] = useState('');
+  const [observations, setObservations] = useState('');
+  const [diet, setDiet] = useState('');
+  const [chargeService, setChargeService] = useState(false);
 
   const navigate = useNavigate();
-  const { setHospitalizacionData } = useHospitalizacion();
+  const { addHospitalization } = useHospitalizacion();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!selectedPatientId) {
+      alert('No se ha seleccionado un paciente.');
+      return;
+    }
     const data = {
-      fechaIngreso,
-      diasHospitalizacion,
-      tipoPaciente,
-      tipoHospitalizacion,
-      pronostico,
-      pertenencias,
-      observaciones,
-      dietaPaciente,
-      incluirCobro,
+      patient_id: selectedPatientId,
+      admission_date: admissionDate,
+      estimated_days: parseInt(estimatedDays, 10),
+      patient_type: patientType,
+      hospitalization_type: hospitalizationType,
+      prognosis,
+      belongings,
+      observations,
+      diet,
+      charge_service: chargeService,
     };
-    setHospitalizacionData(data); // Almacena los datos en el contexto
-    navigate('/detalles-hospitalizacion'); // Redirige a la página de detalles de hospitalización
+    await addHospitalization(data); // Almacena los datos en el contexto
+    onRegisterSuccess(); // Llama a la función de éxito
+    onClose(); // Cierra el modal
+    navigate('/veterinario/hospitalizations'); // Redirige a la página de hospitalizaciones
   };
 
   return (
@@ -41,8 +48,8 @@ const PreHospitalizacionForm = ({ onClose }) => {
         <input 
           type="datetime-local" 
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={fechaIngreso}
-          onChange={(e) => setFechaIngreso(e.target.value)}
+          value={admissionDate}
+          onChange={(e) => setAdmissionDate(e.target.value)}
           required
         />
       </div>
@@ -51,8 +58,8 @@ const PreHospitalizacionForm = ({ onClose }) => {
         <input 
           type="number" 
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={diasHospitalizacion}
-          onChange={(e) => setDiasHospitalizacion(e.target.value)}
+          value={estimatedDays}
+          onChange={(e) => setEstimatedDays(e.target.value)}
           required
         />
       </div>
@@ -62,33 +69,33 @@ const PreHospitalizacionForm = ({ onClose }) => {
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="tipoPaciente" 
+              name="patientType" 
               className="form-radio" 
-              value="infeccioso" 
-              checked={tipoPaciente === 'infeccioso'}
-              onChange={() => setTipoPaciente('infeccioso')}
+              value="Infeccioso" 
+              checked={patientType === 'Infeccioso'}
+              onChange={() => setPatientType('Infeccioso')}
             />
             <span className="ml-2">Infeccioso</span>
           </label>
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="tipoPaciente" 
+              name="patientType" 
               className="form-radio" 
-              value="noInfeccioso" 
-              checked={tipoPaciente === 'noInfeccioso'}
-              onChange={() => setTipoPaciente('noInfeccioso')}
+              value="No Infeccioso" 
+              checked={patientType === 'No Infeccioso'}
+              onChange={() => setPatientType('No Infeccioso')}
             />
             <span className="ml-2">No Infeccioso</span>
           </label>
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="tipoPaciente" 
+              name="patientType" 
               className="form-radio" 
-              value="postQuirurgico" 
-              checked={tipoPaciente === 'postQuirurgico'}
-              onChange={() => setTipoPaciente('postQuirurgico')}
+              value="Post Quirúrgico" 
+              checked={patientType === 'Post Quirúrgico'}
+              onChange={() => setPatientType('Post Quirúrgico')}
             />
             <span className="ml-2">Post Quirúrgico</span>
           </label>
@@ -100,22 +107,22 @@ const PreHospitalizacionForm = ({ onClose }) => {
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="tipoHospitalizacion" 
+              name="hospitalizationType" 
               className="form-radio" 
-              value="cuidadosIntensivos" 
-              checked={tipoHospitalizacion === 'cuidadosIntensivos'}
-              onChange={() => setTipoHospitalizacion('cuidadosIntensivos')}
+              value="Cuidados Intensivos" 
+              checked={hospitalizationType === 'Cuidados Intensivos'}
+              onChange={() => setHospitalizationType('Cuidados Intensivos')}
             />
             <span className="ml-2">Cuidados Intensivos</span>
           </label>
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="tipoHospitalizacion" 
+              name="hospitalizationType" 
               className="form-radio" 
-              value="normal" 
-              checked={tipoHospitalizacion === 'normal'}
-              onChange={() => setTipoHospitalizacion('normal')}
+              value="Normal" 
+              checked={hospitalizationType === 'Normal'}
+              onChange={() => setHospitalizationType('Normal')}
             />
             <span className="ml-2">Normal</span>
           </label>
@@ -125,32 +132,32 @@ const PreHospitalizacionForm = ({ onClose }) => {
         <label className="block text-sm font-medium text-gray-700">Pronóstico</label>
         <textarea 
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={pronostico}
-          onChange={(e) => setPronostico(e.target.value)}
+          value={prognosis}
+          onChange={(e) => setPrognosis(e.target.value)}
         ></textarea>
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">Pertenencias</label>
         <textarea 
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={pertenencias}
-          onChange={(e) => setPertenencias(e.target.value)}
+          value={belongings}
+          onChange={(e) => setBelongings(e.target.value)}
         ></textarea>
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">Observaciones</label>
         <textarea 
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={observaciones}
-          onChange={(e) => setObservaciones(e.target.value)}
+          value={observations}
+          onChange={(e) => setObservations(e.target.value)}
         ></textarea>
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">Dieta del paciente</label>
         <textarea 
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={dietaPaciente}
-          onChange={(e) => setDietaPaciente(e.target.value)}
+          value={diet}
+          onChange={(e) => setDiet(e.target.value)}
         ></textarea>
       </div>
       <div>
@@ -159,22 +166,22 @@ const PreHospitalizacionForm = ({ onClose }) => {
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="cobroServicio" 
+              name="chargeService" 
               className="form-radio" 
-              value="si" 
-              checked={incluirCobro === 'si'}
-              onChange={() => setIncluirCobro('si')}
+              value={true} 
+              checked={chargeService === true}
+              onChange={() => setChargeService(true)}
             />
             <span className="ml-2">Sí</span>
           </label>
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="cobroServicio" 
+              name="chargeService" 
               className="form-radio" 
-              value="no" 
-              checked={incluirCobro === 'no'}
-              onChange={() => setIncluirCobro('no')}
+              value={false} 
+              checked={chargeService === false}
+              onChange={() => setChargeService(false)}
             />
             <span className="ml-2">No</span>
           </label>

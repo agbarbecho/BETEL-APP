@@ -45,3 +45,29 @@ CREATE TABLE patients (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE hospitalizations (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,  -- Relación con pacientes
+    admission_date TIMESTAMP NOT NULL,                                       -- Fecha de ingreso
+    estimated_days INT,                                                      -- Días estimados a hospitalizar
+    patient_type VARCHAR(50),                                                -- Tipo de paciente (Infeccioso, No Infeccioso, Post Quirúrgico)
+    hospitalization_type VARCHAR(50),                                        -- Tipo de hospitalización (Cuidados Intensivos, Normal)
+    prognosis TEXT,                                                          -- Pronóstico
+    belongings TEXT,                                                         -- Pertenencias
+    observations TEXT,                                                       -- Observaciones
+    diet TEXT,                                                               -- Dieta del paciente
+    charge_service BOOLEAN,                                                  -- ¿Incluir cobro del servicio?
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                          -- Fecha de creación
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP                           -- Fecha de última actualización
+);
+
+CREATE TABLE hospedaje (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    cost DECIMAL(10, 2) NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

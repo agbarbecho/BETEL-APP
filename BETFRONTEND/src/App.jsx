@@ -23,6 +23,7 @@ import CreatePetPage from './pages/CreatePetPage';
 import PatientsPage from './pages/PatientsPage';
 import PreHospitalizacionForm from './pages/PreHospitalizacionForm';
 import DetalleHospitalizacion from './pages/DetalleHospitalizacion';
+import HospitalizationsPage from './pages/HospitalizationsPage';
 
 const App = () => {
   const { isAuth, loading, user } = useAuth();
@@ -51,10 +52,11 @@ const App = () => {
               <Route element={<PatientProvider><Outlet /></PatientProvider>}>
                 <Route path="/veterinario/patients" element={<PatientsPage />} />
               </Route>
+              <Route path="/veterinario/hospitalizations" element={<HospitalizationsPage />} />
             </Route>
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/prehospitalizacion" element={<PreHospitalizacionForm />} />
-            <Route path="/detalles-hospitalizacion" element={<DetalleHospitalizacion />} />
+            <Route path="/detalles-hospitalizacion/:id" element={<DetalleHospitalizacion />} />
 
             <Route element={<ProtectedRoute isAllowed={user?.role_id === 1} redirectTo="/home" />}>
               <Route element={<UserProvider><Outlet /></UserProvider>}>

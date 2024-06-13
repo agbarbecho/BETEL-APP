@@ -17,32 +17,20 @@ import ReusableModal from '../components/modals/ReusableModal';
 import PreHospitalizacionModal from '../components/modals/PreHospitalizacionModal';
 import PreHospitalizacionForm from '../pages/PreHospitalizacionForm';
 import { useClients } from '../context/ClientsContext';
-import { usePatients } from '../context/PatientContext';
-import useSearchFilter from '../components/hooks/useSearchFilter'; // Asegúrate de que esta ruta sea correcta
+import useSearchFilter from '../components/hooks/useSearchFilter';
 
 const HomePage = () => {
   const { clients, fetchClients } = useClients();
-  const { patients, fetchPatients } = usePatients();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPreHospModalOpen, setIsPreHospModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedPet, setSelectedPet] = useState(null);
 
-  // Combinando datos de clientes y pacientes
-  const combinedData = patients.map(patient => {
-    const client = clients.find(c => c.id === patient.client_id);
-    return {
-      ...patient,
-      clientFullName: client.full_name,
-      clientCedula: client.cedula
-    };
-  });
-
-  const { searchTerm, setSearchTerm, filteredData: filteredPatients } = useSearchFilter(combinedData, ['name', 'clientFullName', 'clientCedula']);
+  const { searchTerm, setSearchTerm, filteredData: filteredClients } = useSearchFilter(clients, ['full_name', 'pets']);
 
   useEffect(() => {
     fetchClients();
-    fetchPatients();
-  }, [fetchClients, fetchPatients]);
+  }, [fetchClients]);
 
   const sections = [
     { name: 'Consulta Virtual', icon: <FaLaptopMedical />, color: 'bg-red-400' },
@@ -63,24 +51,31 @@ const HomePage = () => {
     setIsModalOpen(false);
   };
 
-  const handleClientSelect = (client) => {
+  const handleClientSelect = (client, pet) => {
     setSelectedClient(client);
+    setSelectedPet(pet);
     setIsModalOpen(false);
   };
 
   const handleContinue = () => {
-    setIsPreHospModalOpen(true);
+    if (selectedPet) {
+      setIsPreHospModalOpen(true);
+    } else {
+      alert('Por favor, seleccione un paciente.');
+    }
   };
 
   const closePreHospModal = () => {
     setIsPreHospModalOpen(false);
     setSelectedClient(null);
+    setSelectedPet(null);
   };
 
   const handleRegisterSuccess = () => {
     console.log('Registro exitoso');
     setIsPreHospModalOpen(false);
     setSelectedClient(null);
+    setSelectedPet(null);
   };
 
   return (
@@ -98,12 +93,12 @@ const HomePage = () => {
           </div>
         ))}
       </div>
-      {selectedClient && (
+      {selectedClient && selectedPet && (
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-4">Selecciona al paciente y su propietario:</h2>
           <div className="flex items-center">
             <div className="flex-grow border border-gray-300 rounded px-4 py-2">
-              {selectedClient.full_name} ({selectedClient.cedula})
+              {selectedPet.pet_name} - {selectedClient.full_name} ({selectedClient.cedula})
             </div>
             <button
               className="bg-green-500 text-white px-4 py-2 rounded ml-4 hover:bg-green-700"
@@ -128,17 +123,21 @@ const HomePage = () => {
               className="border border-gray-300 rounded px-4 py-2 w-full mb-4"
             />
             {searchTerm && (
-              <div>
-                {filteredPatients.length > 0 ? (
+              <div className="max-h-60 overflow-y-auto">
+                {filteredClients.length > 0 ? (
                   <ul>
-                    {filteredPatients.map((patient) => (
-                      <li
-                        key={patient.id}
-                        className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded"
-                        onClick={() => handleClientSelect(patient)}
-                      >
-                        {patient.name} - {patient.clientFullName} ({patient.clientCedula})
-                      </li>
+                    {filteredClients.map((client) => (
+                      <React.Fragment key={client.id}>
+                        {client.pets.map((pet) => (
+                          <li
+                            key={`${client.id}-${pet.pet_id}`}
+                            className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded flex justify-between items-center"
+                            onClick={() => handleClientSelect(client, pet)}
+                          >
+                            <span className="truncate">{pet.pet_name} - {client.full_name} ({client.cedula})</span>
+                          </li>
+                        ))}
+                      </React.Fragment>
                     ))}
                   </ul>
                 ) : (
@@ -158,7 +157,11 @@ const HomePage = () => {
         isOpen={isPreHospModalOpen}
         onClose={closePreHospModal}
       >
-        <PreHospitalizacionForm onClose={closePreHospModal} onRegisterSuccess={handleRegisterSuccess} />
+        <PreHospitalizacionForm
+          onClose={closePreHospModal}
+          onRegisterSuccess={handleRegisterSuccess}
+          selectedPatientId={selectedPet ? selectedPet.pet_id : null} // Asegurar que no es null
+        />
       </PreHospitalizacionModal>
     </div>
   );

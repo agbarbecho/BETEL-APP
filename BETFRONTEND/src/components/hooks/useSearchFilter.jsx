@@ -1,4 +1,3 @@
-// src/hooks/useSearchFilter.js
 import { useState, useMemo } from 'react';
 
 const useSearchFilter = (data, searchKeys) => {
@@ -7,11 +6,19 @@ const useSearchFilter = (data, searchKeys) => {
   const filteredData = useMemo(() => {
     if (!data || !searchKeys) return [];
 
-    return data.filter(item =>
-      searchKeys.some(key =>
-        item[key]?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
+    return data.filter(item => {
+      const searchString = searchKeys
+        .map(key => {
+          if (key === 'pets') {
+            return item.pets.map(pet => `${pet.pet_name} ${item.full_name}`).join(' ');
+          } else {
+            return item[key];
+          }
+        })
+        .join(' ')
+        .toLowerCase();
+      return searchString.includes(searchTerm.toLowerCase());
+    });
   }, [searchTerm, data, searchKeys]);
 
   return { searchTerm, setSearchTerm, filteredData };
