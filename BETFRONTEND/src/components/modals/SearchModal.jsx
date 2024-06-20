@@ -49,7 +49,7 @@ const SearchModal = ({ isOpen, onClose, onSelect }) => {
                           className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded flex justify-between items-center"
                           onClick={() => handleClientSelect(client, pet)}
                         >
-                          <span className="truncate">{pet.pet_name} - {client.full_name} ({client.cedula})</span>
+                          <span className="truncate">{pet.name} - {client.full_name} ({client.cedula})</span>
                         </li>
                       ))}
                     </React.Fragment>
@@ -72,4 +72,5 @@ const SearchModal = ({ isOpen, onClose, onSelect }) => {
 };
 
 export default SearchModal;
+
 

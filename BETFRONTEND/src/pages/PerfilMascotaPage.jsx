@@ -29,6 +29,10 @@ const PerfilMascotaPage = () => {
     }
   };
 
+  const handleCertificado = () => {
+    navigate(`/veterinario/patients/${id}/certificado`);
+  };
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     return new Date(dateString).toLocaleDateString('es-ES', options);
@@ -72,6 +76,12 @@ const PerfilMascotaPage = () => {
           >
             Eliminar
           </button>
+          <button
+            onClick={handleCertificado}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Certificado
+          </button>
         </div>
       </div>
     </div>
@@ -79,3 +89,4 @@ const PerfilMascotaPage = () => {
 };
 
 export default PerfilMascotaPage;
+
