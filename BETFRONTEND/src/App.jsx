@@ -6,6 +6,7 @@ import { UserProvider } from './context/UserContext';
 import { ModalProvider } from './context/ModalContext';
 import { PatientProvider } from './context/PatientContext';
 import { HospitalizacionProvider } from './context/HospitalizacionContext';
+import { HospedajeProvider } from './context/HospedajeContext';
 
 import Navbar from './components/navbar/Navbar';
 import Sidebar from './components/sidebar/Sidebar';
@@ -92,3 +93,5 @@ const ProtectedLayout = ({ isAuth, toggleSidebar, sidebarOpen }) => (
 );
 
 export default App;
+
+

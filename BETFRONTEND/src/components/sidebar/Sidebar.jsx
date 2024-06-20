@@ -1,3 +1,4 @@
+// src/components/sidebar/Sidebar.jsx
 import { Link } from "react-router-dom";
 import { FaHome, FaUserMd, FaUserShield, FaPaw, FaStethoscope, FaDog, FaSyringe, FaFileMedical } from "react-icons/fa"; 
 import { useAuth } from "../../context/AuthContext";
@@ -70,3 +71,5 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 };
 
 export default Sidebar;
+
+
