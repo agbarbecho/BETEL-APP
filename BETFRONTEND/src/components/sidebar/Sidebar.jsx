@@ -39,7 +39,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </Link>
           </li>
           <li className="mb-8 flex items-center">
-            <Link to="/hospedaje" className="flex items-center text-lg">
+            <Link to="/veterinario/hospedaje" className="flex items-center text-lg">
               <FaPaw className="text-2xl" />
               <span className={`ml-4 transition-opacity duration-300 ${!isOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>Hospedaje</span>
             </Link>
