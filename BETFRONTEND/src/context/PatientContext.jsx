@@ -1,6 +1,5 @@
-// src/context/PatientContext.jsx
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { getAllPatientsRequest, createPatientRequest, deletePatientRequest } from '../api/patients.api';
+import { getAllPatientsRequest, getPatientRequest, createPatientRequest, updatePatientRequest, deletePatientRequest } from '../api/patients.api';
 
 const PatientContext = createContext();
 
@@ -8,6 +7,7 @@ export const usePatients = () => useContext(PatientContext);
 
 export const PatientProvider = ({ children }) => {
   const [patients, setPatients] = useState([]);
+  const [currentPatient, setCurrentPatient] = useState(null);
 
   const fetchPatients = useCallback(async () => {
     try {
@@ -18,12 +18,32 @@ export const PatientProvider = ({ children }) => {
     }
   }, []);
 
+  const fetchPatient = useCallback(async (id) => {
+    try {
+      const response = await getPatientRequest(id);
+      setCurrentPatient(response.data);
+    } catch (error) {
+      console.error('Error fetching patient:', error);
+    }
+  }, []);
+
   const addPatient = useCallback(async (patient) => {
     try {
       const response = await createPatientRequest(patient);
       setPatients((prevPatients) => [...prevPatients, response.data]);
     } catch (error) {
       console.error('Error adding patient:', error);
+    }
+  }, []);
+
+  const updatePatient = useCallback(async (id, patient) => {
+    try {
+      await updatePatientRequest(id, patient);
+      setPatients((prevPatients) =>
+        prevPatients.map((p) => (p.id === id ? { ...p, ...patient } : p))
+      );
+    } catch (error) {
+      console.error('Error updating patient:', error);
     }
   }, []);
 
@@ -37,7 +57,7 @@ export const PatientProvider = ({ children }) => {
   }, []);
 
   return (
-    <PatientContext.Provider value={{ patients, fetchPatients, addPatient, deletePatient }}>
+    <PatientContext.Provider value={{ patients, currentPatient, fetchPatients, fetchPatient, addPatient, updatePatient, deletePatient }}>
       {children}
     </PatientContext.Provider>
   );

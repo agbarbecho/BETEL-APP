@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState } from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
@@ -24,6 +23,7 @@ import PatientsPage from './pages/PatientsPage';
 import PreHospitalizacionForm from './pages/PreHospitalizacionForm';
 import DetalleHospitalizacion from './pages/DetalleHospitalizacion';
 import HospitalizationsPage from './pages/HospitalizationsPage';
+import PerfilMascotaPage from './pages/PerfilMascotaPage'; // Importa el componente PerfilMascotaPage
 
 const App = () => {
   const { isAuth, loading, user } = useAuth();
@@ -38,35 +38,36 @@ const App = () => {
   return (
     <ModalProvider>
       <HospitalizacionProvider>
-        <Routes>
-          <Route element={<PublicLayout />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-          </Route>
+        <PatientProvider>
+          <Routes>
+            <Route element={<PublicLayout />}>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+            </Route>
 
-          <Route element={<ProtectedLayout isAuth={isAuth} toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />}>
-            <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/veterinario/clients" element={<ClientsPage />} />
-              <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
-              <Route element={<PatientProvider><Outlet /></PatientProvider>}>
+            <Route element={<ProtectedLayout isAuth={isAuth} toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />}>
+              <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/veterinario/clients" element={<ClientsPage />} />
+                <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
                 <Route path="/veterinario/patients" element={<PatientsPage />} />
+                <Route path="/veterinario/patients/:id" element={<PerfilMascotaPage />} /> {/* Nueva ruta para el perfil de la mascota */}
+                <Route path="/veterinario/hospitalization" element={<HospitalizationsPage />} />
               </Route>
-              <Route path="/veterinario/hospitalization" element={<HospitalizationsPage />} />
-            </Route>
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/prehospitalizacion" element={<PreHospitalizacionForm />} />
-            <Route path="/detalles-hospitalizacion/:id" element={<DetalleHospitalizacion />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/prehospitalizacion" element={<PreHospitalizacionForm />} />
+              <Route path="/detalles-hospitalizacion/:id" element={<DetalleHospitalizacion />} />
 
-            <Route element={<ProtectedRoute isAllowed={user?.role_id === 1} redirectTo="/home" />}>
-              <Route element={<UserProvider><Outlet /></UserProvider>}>
-                <Route path="/admin" element={<AdminPage />} />
+              <Route element={<ProtectedRoute isAllowed={user?.role_id === 1} redirectTo="/home" />}>
+                <Route element={<UserProvider><Outlet /></UserProvider>}>
+                  <Route path="/admin" element={<AdminPage />} />
+                </Route>
               </Route>
             </Route>
-          </Route>
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </PatientProvider>
       </HospitalizacionProvider>
     </ModalProvider>
   );

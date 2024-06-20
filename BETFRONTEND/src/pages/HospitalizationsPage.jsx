@@ -1,14 +1,16 @@
-// src/pages/HospitalizationsPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHospitalizacion } from '../context/HospitalizacionContext';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaEllipsisV, FaUser, FaArrowUp, FaArrowDown, FaPlus } from 'react-icons/fa';
+import RegisterHospitalizationModal from '../components/modals/RegisterHospitalizationModal';
 
 const HospitalizationsPage = () => {
-  const { hospitalizations, fetchHospitalizations } = useHospitalizacion();
+  const { hospitalizations, fetchHospitalizations, updateHospitalizationStatus } = useHospitalizacion();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [hospitalizationsPerPage, setHospitalizationsPerPage] = useState(10);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,10 +44,52 @@ const HospitalizationsPage = () => {
     navigate(`/detalles-hospitalizacion/${id}`);
   };
 
+  const handleDischarge = async (id) => {
+    try {
+      await updateHospitalizationStatus(id, false);
+    } catch (error) {
+      console.error("Error al actualizar el estado de hospitalización", error);
+    }
+  };
+
+  const handleReHospitalize = async (id) => {
+    try {
+      await updateHospitalizationStatus(id, true);
+    } catch (error) {
+      console.error("Error al actualizar el estado de hospitalización", error);
+    }
+  };
+
+  const toggleDropdown = (id) => {
+    if (isDropdownOpen === id) {
+      setIsDropdownOpen(null);
+    } else {
+      setIsDropdownOpen(id);
+    }
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleRegisterSuccess = () => {
+    fetchHospitalizations();
+  };
+
   return (
     <div className="w-full p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Lista de Hospitalizaciones</h1>
+        <button
+          onClick={openModal}
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center"
+        >
+          <FaPlus className="mr-2" /> Registrar Hospitalización
+        </button>
       </div>
       <div className="bg-white shadow-md rounded-lg p-4 w-full">
         <div className="flex justify-between items-center mb-4">
@@ -110,6 +154,9 @@ const HospitalizationsPage = () => {
                   Observaciones
                 </th>
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Estado
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
@@ -139,12 +186,53 @@ const HospitalizationsPage = () => {
                     {hospitalization.observations}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <button
-                      onClick={() => handleViewDetails(hospitalization.id)}
-                      className="text-blue-500 hover:underline"
+                    <span
+                      className={
+                        hospitalization.is_hospitalized ? 'text-green-500' : 'text-red-500'
+                      }
                     >
-                      Ver Detalles
-                    </button>
+                      {hospitalization.is_hospitalized ? 'Hospitalizado' : 'No Hospitalizado'}
+                    </span>
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <div className="relative">
+                      <button
+                        onClick={() => toggleDropdown(hospitalization.id)}
+                        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 flex items-center"
+                      >
+                        <FaEllipsisV />
+                      </button>
+                      {isDropdownOpen === hospitalization.id && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+                          <ul>
+                            <li
+                              className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => handleViewDetails(hospitalization.id)}
+                            >
+                              <FaUser className="mr-2" />
+                              Ver Perfil
+                            </li>
+                            {hospitalization.is_hospitalized ? (
+                              <li
+                                onClick={() => handleDischarge(hospitalization.id)}
+                                className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                              >
+                                <FaArrowDown className="mr-2" />
+                                Dar de Alta
+                              </li>
+                            ) : (
+                              <li
+                                onClick={() => handleReHospitalize(hospitalization.id)}
+                                className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                              >
+                                <FaArrowUp className="mr-2" />
+                                Re-Hospitalizar
+                              </li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -152,6 +240,11 @@ const HospitalizationsPage = () => {
           </table>
         </div>
       </div>
+      <RegisterHospitalizationModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onRegisterSuccess={handleRegisterSuccess}
+      />
     </div>
   );
 };

@@ -58,7 +58,8 @@ CREATE TABLE hospitalizations (
     diet TEXT,                                                               -- Dieta del paciente
     charge_service BOOLEAN,                                                  -- ¿Incluir cobro del servicio?
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                          -- Fecha de creación
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP                           -- Fecha de última actualización
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                     -- Fecha de última actualización
+    is_hospitalized BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE hospedaje (

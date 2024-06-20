@@ -12,7 +12,19 @@ export const getAllClients = async (req, res, next) => {
         c.address, 
         c.email, 
         c.created_at, 
-        json_agg(json_build_object('pet_name', p.name)) as pets
+        json_agg(
+          json_build_object(
+            'id', p.id,
+            'name', p.name,
+            'breed', p.breed,
+            'species', p.species,
+            'weight', p.weight,
+            'birth_date', p.birth_date,
+            'color', p.color,
+            'size', p.size,
+            'reproductive_status', p.reproductive_status
+          ) ORDER BY p.id
+        ) as pets
       FROM clients c
       LEFT JOIN patients p ON c.id = p.client_id
       GROUP BY c.id
@@ -23,11 +35,37 @@ export const getAllClients = async (req, res, next) => {
   }
 };
 
-// Obtener un cliente específico
+// Obtener un cliente específico con sus pacientes
 export const getClientById = async (req, res, next) => {
   try {
     const { clientId } = req.params;
-    const result = await pool.query("SELECT id, full_name, email, phone, cedula, address, created_at FROM clients WHERE id = $1", [clientId]);
+    const result = await pool.query(`
+      SELECT 
+        c.id as client_id, 
+        c.full_name as client_name, 
+        c.cedula, 
+        c.phone, 
+        c.address, 
+        c.email, 
+        c.created_at, 
+        json_agg(
+          json_build_object(
+            'id', p.id,
+            'name', p.name,
+            'breed', p.breed,
+            'species', p.species,
+            'weight', p.weight,
+            'birth_date', p.birth_date,
+            'color', p.color,
+            'size', p.size,
+            'reproductive_status', p.reproductive_status
+          )
+        ) as pets
+      FROM clients c
+      LEFT JOIN patients p ON c.id = p.client_id
+      WHERE c.id = $1
+      GROUP BY c.id
+    `, [clientId]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ message: 'Cliente no encontrado' });

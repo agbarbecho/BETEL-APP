@@ -4,6 +4,7 @@ import {
   getHospitalizationRequest,
   createHospitalizationRequest, 
   updateHospitalizationRequest, 
+  updateHospitalizationStatusRequest,  // Importa la nueva función de la API
   deleteHospitalizationRequest 
 } from '../api/hospitalizations.api';
 
@@ -53,6 +54,17 @@ export const HospitalizacionProvider = ({ children }) => {
     }
   }, []);
 
+  const updateHospitalizationStatus = useCallback(async (id, status) => {
+    try {
+      await updateHospitalizationStatusRequest(id, status);
+      setHospitalizations((prev) =>
+        prev.map((h) => (h.id === id ? { ...h, is_hospitalized: status } : h))
+      );
+    } catch (error) {
+      console.error('Error updating hospitalization status:', error);
+    }
+  }, []);
+
   const deleteHospitalization = useCallback(async (id) => {
     try {
       await deleteHospitalizationRequest(id);
@@ -70,6 +82,7 @@ export const HospitalizacionProvider = ({ children }) => {
       fetchHospitalization,
       addHospitalization, 
       updateHospitalization, 
+      updateHospitalizationStatus, // Provee la nueva función en el contexto
       deleteHospitalization 
     }}>
       {children}

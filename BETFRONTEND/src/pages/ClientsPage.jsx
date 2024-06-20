@@ -5,7 +5,6 @@ import { FaPlus, FaEllipsisV, FaUser, FaTrash, FaChevronLeft, FaChevronRight } f
 import RegisterClientModal from '../components/ui/clientes/RegisterClientModal';
 import ContainerClient from '../components/ui/clientes/ContainerClient';
 import ReusableModal from '../components/modals/ReusableModal';
-import PetsDropdown from '../components/ui/clientes/PetsDropdown'; // Ajusta la ruta si es necesario
 
 const ClientsPage = () => {
   const { clients, fetchClients, deleteClient } = useClients();
@@ -138,22 +137,22 @@ const ClientsPage = () => {
                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Cédula
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Celular
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Dirección
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Mascotas
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Fecha de Creación
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-5 py-3 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
@@ -183,7 +182,31 @@ const ClientsPage = () => {
                       {client.email}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      <PetsDropdown pets={client.pets} />
+                      {client.pets.length > 0 && (
+                        <div className="relative">
+                          <button
+                            onClick={() => toggleDropdown(client.client_id)}
+                            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 flex items-center"
+                          >
+                            {client.pets[0].name}
+                            {client.pets.length > 1 && <FaEllipsisV className="ml-2" />}
+                          </button>
+                          {isDropdownOpen === client.client_id && client.pets.length > 1 && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+                              <ul>
+                                {client.pets.slice(1).map((pet) => (
+                                  <li
+                                    key={pet.id}
+                                    className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                                  >
+                                    {pet.name}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       {new Date(client.created_at).toLocaleDateString()}
