@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import ReusableModal from './ReusableModal';
 import useSearchFilter from '../hooks/useSearchFilter';
-import { useClients } from '../../context/ClientsContext';
 
-const SearchModal = ({ isOpen, onClose, onSelect }) => {
-  const { clients } = useClients();
+const SearchModal = ({ isOpen, onClose, onSelect, clients }) => {
   const { searchTerm, setSearchTerm, filteredData: filteredClients } = useSearchFilter(clients, ['full_name', 'pets']);
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedPet, setSelectedPet] = useState(null);
@@ -45,8 +43,10 @@ const SearchModal = ({ isOpen, onClose, onSelect }) => {
                     <React.Fragment key={client.id}>
                       {client.pets.map((pet) => (
                         <li
-                          key={`${client.id}-${pet.pet_id}`}
-                          className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded flex justify-between items-center"
+                          key={`${client.id}-${pet.id}`}
+                          className={`mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded flex justify-between items-center ${
+                            selectedPet && selectedPet.id === pet.id ? 'bg-gray-300' : ''
+                          }`}
                           onClick={() => handleClientSelect(client, pet)}
                         >
                           <span className="truncate">{pet.name} - {client.full_name} ({client.cedula})</span>
@@ -72,5 +72,9 @@ const SearchModal = ({ isOpen, onClose, onSelect }) => {
 };
 
 export default SearchModal;
+
+
+
+
 
 
