@@ -3,8 +3,9 @@ import { useHospitalizacion } from '../../context/HospitalizacionContext';
 import { useClients } from '../../context/ClientsContext';
 
 const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     patient_id: '',
+    client_id: '',
     admission_date: '',
     estimated_days: '',
     patient_type: '',
@@ -14,7 +15,9 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
     observations: '',
     diet: '',
     charge_service: false,
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   const { addHospitalization } = useHospitalizacion();
   const { clients, fetchClients } = useClients();
@@ -29,13 +32,14 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
 
   useEffect(() => {
     if (searchTerm) {
-      const filtered = clients.flatMap(client => 
-        client.pets.map(pet => ({
+      const filtered = clients.flatMap(client => {
+        return client.pets.map(pet => ({
           ...pet,
-          clientName: client.full_name,
+          clientId: client.client_id,
+          clientName: client.client_name,
           clientCedula: client.cedula,
-        }))
-      ).filter(pet =>
+        }));
+      }).filter(pet =>
         `${pet.name} ${pet.clientName} ${pet.clientCedula}`.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredClients(filtered);
@@ -55,8 +59,18 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addHospitalization(formData);
+      // Convertir la fecha de ingreso a TIMESTAMP
+      const formattedData = {
+        ...formData,
+        admission_date: new Date(formData.admission_date).toISOString(),
+        estimated_days: parseInt(formData.estimated_days, 10)
+      };
+
+      await addHospitalization(formattedData);
       onRegisterSuccess();
+      setFormData(initialFormData); // Limpiar los datos del formulario
+      setSearchTerm(''); // Limpiar el término de búsqueda
+      setFilteredClients([]); // Limpiar la lista de clientes filtrados
       onClose();
     } catch (error) {
       console.error('Error al registrar la hospitalización:', error);
@@ -67,9 +81,10 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
     setFormData((prevData) => ({
       ...prevData,
       patient_id: patient.id,
+      client_id: patient.clientId,
     }));
-    setSearchTerm(patient.name); // Show the selected patient name in the search input
-    setFilteredClients([]); // Clear the search results after selection
+    setSearchTerm(`${patient.name} - ${patient.clientName} (${patient.clientCedula})`);
+    setFilteredClients([]);
   };
 
   if (!isOpen) return null;
@@ -96,7 +111,7 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
                     className="p-2 hover:bg-gray-200 cursor-pointer"
                     onClick={() => handleSelectPatient(pet)}
                   >
-                    {`${pet.name} - ${pet.clientName} (${pet.clientCedula})`}
+                    {`${pet.name} - ${pet.clientName || 'Nombre no disponible'} (${pet.clientCedula})`}
                   </div>
                 ))}
               </div>
@@ -159,7 +174,6 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
                 value={formData.prognosis}
                 onChange={handleChange}
                 className="border border-gray-300 rounded px-4 py-2 w-full"
-                required
               />
             </div>
             <div>

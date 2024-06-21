@@ -27,11 +27,15 @@ const HospitalizationsPage = () => {
     setCurrentPage(1); // Reset to first page
   };
 
-  const filteredHospitalizations = hospitalizations.filter(
-    (hosp) =>
-      hosp.patient_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      hosp.observations.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredHospitalizations = hospitalizations.filter((hosp) => {
+    const patientName = hosp.patient_name || '';
+    const observations = hosp.observations || '';
+
+    return (
+      patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      observations.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   const indexOfLastHospitalization = currentPage * hospitalizationsPerPage;
   const indexOfFirstHospitalization = indexOfLastHospitalization - hospitalizationsPerPage;

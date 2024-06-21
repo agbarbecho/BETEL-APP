@@ -47,7 +47,8 @@ CREATE TABLE patients (
 );
 CREATE TABLE hospitalizations (
     id SERIAL PRIMARY KEY,
-    patient_id INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,  -- Relación con pacientes
+    patient_id INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+    client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,  -- Relación con pacientes
     admission_date TIMESTAMP NOT NULL,                                       -- Fecha de ingreso
     estimated_days INT,                                                      -- Días estimados a hospitalizar
     patient_type VARCHAR(50),                                                -- Tipo de paciente (Infeccioso, No Infeccioso, Post Quirúrgico)
