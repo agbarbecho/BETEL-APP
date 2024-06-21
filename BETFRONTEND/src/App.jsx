@@ -26,7 +26,7 @@ import DetalleHospitalizacion from './pages/DetalleHospitalizacion';
 import HospitalizationsPage from './pages/HospitalizationsPage';
 import PerfilMascotaPage from './pages/PerfilMascotaPage';
 import HospedajePage from './pages/HospedajePage';
-import CertificadoMedicoPage from './pages/CertificadoMedicoPage'; // Importa el componente CertificadoMedicoPage
+import CertificadoMedicoPage from './pages/CertificadoMedicoPage'; 
 
 const App = () => {
   const { isAuth, loading, user } = useAuth();
