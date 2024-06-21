@@ -9,3 +9,5 @@ export const createClientRequest = (client) => axios.post('/veterinario/clients'
 export const updateClientRequest = (id, client) => axios.put(`/veterinario/clients/${id}`, client);
 
 export const deleteClientRequest = (id) => axios.delete(`/veterinario/clients/${id}`);
+
+
