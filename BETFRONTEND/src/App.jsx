@@ -26,6 +26,7 @@ import DetalleHospitalizacion from './pages/DetalleHospitalizacion';
 import HospitalizationsPage from './pages/HospitalizationsPage';
 import PerfilMascotaPage from './pages/PerfilMascotaPage';
 import HospedajePage from './pages/HospedajePage';
+import HospedajeRegistroPage from './pages/HospedajeRegistroPage'; 
 import CertificadoMedicoPage from './pages/CertificadoMedicoPage';
 
 
@@ -60,6 +61,7 @@ const App = () => {
                     <Route path="/veterinario/patients/:id" element={<PerfilMascotaPage />} />
                     <Route path="/veterinario/hospitalization" element={<HospitalizationsPage />} />
                     <Route path="/veterinario/hospedaje" element={<HospedajePage />} />
+                    <Route path="/hospedaje/registro" element={<HospedajeRegistroPage />} /> {/* Define la ruta */}
                     <Route path="/veterinario/patients/:id/certificado" element={<CertificadoMedicoPage />} />
                   </Route>
                   <Route path="/profile" element={<ProfilePage />} />

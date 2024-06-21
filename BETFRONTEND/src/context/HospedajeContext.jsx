@@ -23,6 +23,7 @@ export const HospedajeProvider = ({ children }) => {
       setHospedajes((prevHospedajes) => [...prevHospedajes, response.data]);
     } catch (error) {
       console.error('Error adding hospedaje:', error);
+      throw error; // Re-lanzar el error para manejarlo en la interfaz de usuario
     }
   }, []);
 
