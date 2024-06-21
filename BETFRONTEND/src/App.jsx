@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState } from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
@@ -25,13 +24,9 @@ import PatientsPage from './pages/PatientsPage';
 import PreHospitalizacionForm from './pages/PreHospitalizacionForm';
 import DetalleHospitalizacion from './pages/DetalleHospitalizacion';
 import HospitalizationsPage from './pages/HospitalizationsPage';
-<<<<<<< Updated upstream
-import PerfilMascotaPage from './pages/PerfilMascotaPage'; 
+import PerfilMascotaPage from './pages/PerfilMascotaPage';
 import HospedajePage from './pages/HospedajePage';
-=======
-import PerfilMascotaPage from './pages/PerfilMascotaPage'; // Importa el componente PerfilMascotaPage
 import CertificadoMedicoPage from './pages/CertificadoMedicoPage'; // Importa el componente CertificadoMedicoPage
->>>>>>> Stashed changes
 
 const App = () => {
   const { isAuth, loading, user } = useAuth();
@@ -47,30 +42,11 @@ const App = () => {
     <ModalProvider>
       <HospitalizacionProvider>
         <PatientProvider>
-<<<<<<< Updated upstream
           <HospedajeProvider>
             <Routes>
               <Route element={<PublicLayout />}>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
-=======
-          <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-            </Route>
-
-            <Route element={<ProtectedLayout isAuth={isAuth} toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />}>
-              <Route element={<ClientsProvider><Outlet /></ClientsProvider>}>
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/veterinario/clients" element={<ClientsPage />} />
-                <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
-                <Route path="/veterinario/patients" element={<PatientsPage />} />
-                <Route path="/veterinario/patients/:id" element={<PerfilMascotaPage />} /> {/* Nueva ruta para el perfil de la mascota */}
-                <Route path="/veterinario/hospitalization" element={<HospitalizationsPage />} />
-                <Route path="/veterinario/patients/:id/certificado" element={<CertificadoMedicoPage />} /> {/* Nueva ruta para el certificado médico */}
-                <Route path="/certificado-medico" element={<CertificadoMedicoPage />} /> {/* Nueva ruta para abrir el modal de búsqueda */}
->>>>>>> Stashed changes
               </Route>
 
               <Route element={<ProtectedLayout isAuth={isAuth} toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />}>
@@ -79,9 +55,11 @@ const App = () => {
                   <Route path="/veterinario/clients" element={<ClientsPage />} />
                   <Route path="/veterinario/clients/:id" element={<CreatePetPage />} />
                   <Route path="/veterinario/patients" element={<PatientsPage />} />
-                  <Route path="/veterinario/patients/:id" element={<PerfilMascotaPage />} /> {/* Nueva ruta para el perfil de la mascota */}
+                  <Route path="/veterinario/patients/:id" element={<PerfilMascotaPage />} /> {/* Ruta para el perfil de la mascota */}
                   <Route path="/veterinario/hospitalization" element={<HospitalizationsPage />} />
-                  <Route path="/veterinario/hospedaje" element={<HospedajePage />} /> {/* Nueva ruta para el hospedaje */}
+                  <Route path="/veterinario/hospedaje" element={<HospedajePage />} /> {/* Ruta para el hospedaje */}
+                  <Route path="/veterinario/patients/:id/certificado" element={<CertificadoMedicoPage />} /> {/* Ruta para el certificado médico */}
+                  <Route path="/certificado-medico" element={<CertificadoMedicoPage />} /> {/* Ruta para abrir el modal de búsqueda */}
                 </Route>
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/prehospitalizacion" element={<PreHospitalizacionForm />} />

@@ -41,7 +41,7 @@ const HospitalizationsPage = () => {
   const paginatePrev = () => setCurrentPage(currentPage - 1);
 
   const handleViewDetails = (id) => {
-    navigate(`/detalles-hospitalizacion/${id}`);
+    navigate(`/veterinario/patients/${id}`);
   };
 
   const handleDischarge = async (id) => {
