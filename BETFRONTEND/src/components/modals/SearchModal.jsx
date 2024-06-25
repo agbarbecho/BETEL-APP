@@ -1,9 +1,10 @@
+// src/components/SearchModal.jsx
 import React, { useState } from 'react';
 import ReusableModal from './ReusableModal';
 import useSearchFilter from '../hooks/useSearchFilter';
 
 const SearchModal = ({ isOpen, onClose, onSelect, clients }) => {
-  const { searchTerm, setSearchTerm, filteredData: filteredClients } = useSearchFilter(clients, ['full_name', 'pets']);
+  const { searchTerm, setSearchTerm, filteredData: filteredClients } = useSearchFilter(clients, ['client_name', 'cedula', 'pets']);
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedPet, setSelectedPet] = useState(null);
 
@@ -30,7 +31,7 @@ const SearchModal = ({ isOpen, onClose, onSelect, clients }) => {
         <div>
           <input
             type="text"
-            placeholder="Buscar por nombre del cliente o mascota"
+            placeholder="Buscar por nombre del cliente, cédula o nombre de la mascota"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="border border-gray-300 rounded px-4 py-2 w-full mb-4"
@@ -39,20 +40,18 @@ const SearchModal = ({ isOpen, onClose, onSelect, clients }) => {
             <div className="max-h-60 overflow-y-auto">
               {filteredClients.length > 0 ? (
                 <ul>
-                  {filteredClients.map((client) => (
-                    <React.Fragment key={client.id}>
-                      {client.pets.map((pet) => (
-                        <li
-                          key={`${client.id}-${pet.id}`}
-                          className={`mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded flex justify-between items-center ${
-                            selectedPet && selectedPet.id === pet.id ? 'bg-gray-300' : ''
-                          }`}
-                          onClick={() => handleClientSelect(client, pet)}
-                        >
-                          <span className="truncate">{pet.name} - {client.full_name} ({client.cedula})</span>
-                        </li>
-                      ))}
-                    </React.Fragment>
+                  {filteredClients.map(client => (
+                    client.pets.map(pet => (
+                      <li
+                        key={`${client.id}-${pet.id}`}
+                        className={`mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded flex justify-between items-center ${
+                          selectedPet && selectedPet.id === pet.id ? 'bg-gray-300' : ''
+                        }`}
+                        onClick={() => handleClientSelect(client, pet)}
+                      >
+                        <span className="truncate">{`${pet.name} - ${client.client_name} (${client.cedula})`}</span>
+                      </li>
+                    ))
                   ))}
                 </ul>
               ) : (
@@ -72,9 +71,3 @@ const SearchModal = ({ isOpen, onClose, onSelect, clients }) => {
 };
 
 export default SearchModal;
-
-
-
-
-
-

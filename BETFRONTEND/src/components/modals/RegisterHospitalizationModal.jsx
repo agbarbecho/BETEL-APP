@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHospitalizacion } from '../../context/HospitalizacionContext';
 import { useClients } from '../../context/ClientsContext';
 
-const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) => {
+const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess, hospitalization }) => {
   const initialFormData = {
     patient_id: '',
     client_id: '',
@@ -18,20 +18,53 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
   };
 
   const [formData, setFormData] = useState(initialFormData);
-
-  const { addHospitalization } = useHospitalizacion();
-  const { clients, fetchClients } = useClients();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredClients, setFilteredClients] = useState([]);
+  const [clientsLoaded, setClientsLoaded] = useState(false);
+
+  const { addHospitalization, updateHospitalization } = useHospitalizacion();
+  const { clients, fetchClients } = useClients();
 
   useEffect(() => {
     if (isOpen) {
-      fetchClients();
+      fetchClients().then(() => setClientsLoaded(true));
     }
   }, [isOpen, fetchClients]);
 
   useEffect(() => {
-    if (searchTerm) {
+    if (isOpen && clientsLoaded) {
+      if (hospitalization) {
+        const selectedClient = clients.find(client =>
+          client.pets.some(pet => pet.id === hospitalization.patient_id)
+        );
+        const selectedPet = selectedClient ? selectedClient.pets.find(pet => pet.id === hospitalization.patient_id) : null;
+        const searchTerm = selectedPet
+          ? `${selectedPet.name} - ${selectedClient.client_name} (${selectedClient.cedula})`
+          : '';
+
+        setFormData({
+          patient_id: hospitalization.patient_id,
+          client_id: hospitalization.client_id,
+          admission_date: new Date(hospitalization.admission_date).toISOString().split('T')[0],
+          estimated_days: hospitalization.estimated_days,
+          patient_type: hospitalization.patient_type,
+          hospitalization_type: hospitalization.hospitalization_type,
+          prognosis: hospitalization.prognosis,
+          belongings: hospitalization.belongings,
+          observations: hospitalization.observations,
+          diet: hospitalization.diet,
+          charge_service: hospitalization.charge_service,
+        });
+        setSearchTerm(searchTerm);
+      } else {
+        setFormData(initialFormData);
+        setSearchTerm('');
+      }
+    }
+  }, [isOpen, clientsLoaded, hospitalization, clients]);
+
+  useEffect(() => {
+    if (searchTerm && !hospitalization) {
       const filtered = clients.flatMap(client => {
         return client.pets.map(pet => ({
           ...pet,
@@ -46,7 +79,7 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
     } else {
       setFilteredClients([]);
     }
-  }, [searchTerm, clients]);
+  }, [searchTerm, clients, hospitalization]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -59,18 +92,22 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Convertir la fecha de ingreso a TIMESTAMP
       const formattedData = {
         ...formData,
         admission_date: new Date(formData.admission_date).toISOString(),
         estimated_days: parseInt(formData.estimated_days, 10)
       };
 
-      await addHospitalization(formattedData);
+      if (hospitalization) {
+        await updateHospitalization(hospitalization.id, formattedData);
+      } else {
+        await addHospitalization(formattedData);
+      }
+
       onRegisterSuccess();
-      setFormData(initialFormData); // Limpiar los datos del formulario
-      setSearchTerm(''); // Limpiar el término de búsqueda
-      setFilteredClients([]); // Limpiar la lista de clientes filtrados
+      setFormData(initialFormData);
+      setSearchTerm('');
+      setFilteredClients([]);
       onClose();
     } catch (error) {
       console.error('Error al registrar la hospitalización:', error);
@@ -92,7 +129,7 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-7xl">
-        <h2 className="text-2xl mb-4">Registrar Hospitalización</h2>
+        <h2 className="text-2xl mb-4">{hospitalization ? 'Editar Hospitalización' : 'Registrar Hospitalización'}</h2>
         <form onSubmit={handleSubmit}>
           <div className="relative mb-4">
             <label className="block text-gray-700">Buscar Paciente</label>
@@ -102,8 +139,9 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-gray-300 rounded px-4 py-2 w-full"
+              disabled={!!hospitalization}
             />
-            {searchTerm && (
+            {searchTerm && !hospitalization && (
               <div className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto w-full">
                 {filteredClients.map(pet => (
                   <div
@@ -143,7 +181,7 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
           </div>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-gray-700">Tipo de Paciente</label>
+              <label className="block text-gray-700">Tipo de Patología</label>
               <input
                 type="text"
                 name="patient_type"
@@ -232,7 +270,7 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess }) =>
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
-              Registrar
+              {hospitalization ? 'Guardar Cambios' : 'Registrar'}
             </button>
           </div>
         </form>

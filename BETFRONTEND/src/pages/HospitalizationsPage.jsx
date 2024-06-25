@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHospitalizacion } from '../context/HospitalizacionContext';
-import { FaChevronLeft, FaChevronRight, FaEllipsisV, FaUser, FaArrowUp, FaArrowDown, FaPlus } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaEllipsisV, FaUser, FaArrowUp, FaArrowDown, FaPlus, FaEdit } from 'react-icons/fa';
 import RegisterHospitalizationModal from '../components/modals/RegisterHospitalizationModal';
 
 const HospitalizationsPage = () => {
@@ -11,6 +11,7 @@ const HospitalizationsPage = () => {
   const [hospitalizationsPerPage, setHospitalizationsPerPage] = useState(10);
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hospitalizationToEdit, setHospitalizationToEdit] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -72,11 +73,13 @@ const HospitalizationsPage = () => {
     }
   };
 
-  const openModal = () => {
+  const openModal = (hospitalization = null) => {
+    setHospitalizationToEdit(hospitalization);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
+    setHospitalizationToEdit(null);
     setIsModalOpen(false);
   };
 
@@ -89,7 +92,7 @@ const HospitalizationsPage = () => {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Lista de Hospitalizaciones</h1>
         <button
-          onClick={openModal}
+          onClick={() => openModal()}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center"
         >
           <FaPlus className="mr-2" /> Registrar Hospitalización
@@ -216,6 +219,13 @@ const HospitalizationsPage = () => {
                               <FaUser className="mr-2" />
                               Ver Perfil
                             </li>
+                            <li
+                              onClick={() => openModal(hospitalization)}
+                              className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                            >
+                              <FaEdit className="mr-2" />
+                              Editar
+                            </li>
                             {hospitalization.is_hospitalized ? (
                               <li
                                 onClick={() => handleDischarge(hospitalization.id)}
@@ -248,6 +258,7 @@ const HospitalizationsPage = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         onRegisterSuccess={handleRegisterSuccess}
+        hospitalization={hospitalizationToEdit}
       />
     </div>
   );
