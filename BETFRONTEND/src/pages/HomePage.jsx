@@ -1,23 +1,19 @@
 // src/pages/HomePage.jsx
 import React, { useState, useEffect } from 'react';
 import {
-  FaLaptopMedical,
   FaStethoscope,
-  FaNotesMedical,
-  FaSyringe,
   FaMicroscope,
+  FaSyringe,
   FaPills,
-  FaCut,
+  FaHome,
   FaHospitalAlt,
-  FaUserMd,
-  FaDog,
-  FaHome
+  FaDog
 } from 'react-icons/fa';
 import ReusableModal from '../components/modals/ReusableModal';
+import SearchModal from '../components/modals/SearchModal';
 import PreHospitalizacionModal from '../components/modals/PreHospitalizacionModal';
-import PreHospitalizacionForm from '../pages/PreHospitalizacionForm';
+import PreHospitalizacionForm from './PreHospitalizacionForm';
 import { useClients } from '../context/ClientsContext';
-import useSearchFilter from '../components/hooks/useSearchFilter';
 
 const HomePage = () => {
   const { clients, fetchClients } = useClients();
@@ -26,23 +22,16 @@ const HomePage = () => {
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedPet, setSelectedPet] = useState(null);
 
-  const { searchTerm, setSearchTerm, filteredData: filteredClients } = useSearchFilter(clients, ['full_name', 'pets']);
-
   useEffect(() => {
     fetchClients();
   }, [fetchClients]);
 
   const sections = [
-    //{ name: 'Consulta Virtual', icon: <FaLaptopMedical />, color: 'bg-red-400' },
     { name: 'Consulta Médica', icon: <FaStethoscope />, color: 'bg-pink-400' },
-    //{ name: 'Consulta Rápida', icon: <FaNotesMedical />, color: 'bg-red-400' },
-    //{ name: 'Control Consulta', icon: <FaNotesMedical />, color: 'bg-yellow-400' },
     { name: 'Exámenes', icon: <FaMicroscope />, color: 'bg-yellow-400' },
     { name: 'Vacunación', icon: <FaSyringe />, color: 'bg-teal-400' },
     { name: 'Desparasitacion', icon: <FaPills />, color: 'bg-green-400' },
-    //{ name: 'Baño o Corte', icon: <FaCut />, color: 'bg-blue-400' },
     { name: 'Hospedaje', icon: <FaHome />, color: 'bg-blue-400' },
-    //{ name: 'Cirugía', icon: <FaUserMd />, color: 'bg-yellow-400' },
     { name: 'Hospitalización', icon: <FaHospitalAlt />, color: 'bg-yellow-400', onClick: () => setIsModalOpen(true) },
     { name: 'Certificado Médico', icon: <FaDog />, color: 'bg-green-400' },
   ];
@@ -98,7 +87,7 @@ const HomePage = () => {
           <h2 className="text-xl font-bold mb-4">Selecciona al paciente y su propietario:</h2>
           <div className="flex items-center">
             <div className="flex-grow border border-gray-300 rounded px-4 py-2">
-              {selectedPet.pet_name} - {selectedClient.full_name} ({selectedClient.cedula})
+              {selectedPet.name} - {selectedClient.client_name} ({selectedClient.cedula})
             </div>
             <button
               className="bg-green-500 text-white px-4 py-2 rounded ml-4 hover:bg-green-700"
@@ -109,49 +98,11 @@ const HomePage = () => {
           </div>
         </div>
       )}
-      <ReusableModal
+      <SearchModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Hospitalización"
-        content={
-          <div>
-            <input
-              type="text"
-              placeholder="Buscar por nombre del cliente o mascota"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="border border-gray-300 rounded px-4 py-2 w-full mb-4"
-            />
-            {searchTerm && (
-              <div className="max-h-60 overflow-y-auto">
-                {filteredClients.length > 0 ? (
-                  <ul>
-                    {filteredClients.map((client) => (
-                      <React.Fragment key={client.id}>
-                        {client.pets.map((pet) => (
-                          <li
-                            key={`${client.id}-${pet.pet_id}`}
-                            className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded flex justify-between items-center"
-                            onClick={() => handleClientSelect(client, pet)}
-                          >
-                            <span className="truncate">{pet.pet_name} - {client.full_name} ({client.cedula})</span>
-                          </li>
-                        ))}
-                      </React.Fragment>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No se encontraron resultados.</p>
-                )}
-              </div>
-            )}
-          </div>
-        }
-        actions={
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={closeModal}>
-            Confirmar
-          </button>
-        }
+        onSelect={handleClientSelect}
+        clients={clients}
       />
       <PreHospitalizacionModal
         isOpen={isPreHospModalOpen}
@@ -160,7 +111,7 @@ const HomePage = () => {
         <PreHospitalizacionForm
           onClose={closePreHospModal}
           onRegisterSuccess={handleRegisterSuccess}
-          selectedPatientId={selectedPet ? selectedPet.pet_id : null} // Asegurar que no es null
+          selectedPatientId={selectedPet ? selectedPet.id : null}
         />
       </PreHospitalizacionModal>
     </div>

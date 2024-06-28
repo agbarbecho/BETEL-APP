@@ -1,3 +1,4 @@
+// src/hooks/useSearchFilter.js
 import { useState, useMemo } from 'react';
 
 const useSearchFilter = (data, searchKeys) => {
@@ -9,11 +10,12 @@ const useSearchFilter = (data, searchKeys) => {
     return data.filter(item => {
       const searchString = searchKeys
         .map(key => {
-          if (key === 'pets') {
-            return item.pets.map(pet => `${pet.pet_name} ${item.full_name}`).join(' ');
-          } else {
-            return item[key];
+          if (key === 'pets' && item.pets) {
+            return item.pets.map(pet => `${pet.name} ${item.client_name} ${item.cedula}`).join(' ');
+          } else if (item[key]) {
+            return item[key].toString();  // Convertir a string en caso de valores que no sean cadenas
           }
+          return '';  // Asegurarse de manejar claves no existentes o valores indefinidos
         })
         .join(' ')
         .toLowerCase();

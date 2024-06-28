@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClients } from '../context/ClientsContext';
-import { FaPlus, FaEllipsisV, FaUser, FaTrash, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaPlus, FaEllipsisV, FaUser, FaTrash, FaChevronLeft, FaChevronRight, FaEdit } from 'react-icons/fa';
 import RegisterClientModal from '../components/ui/clientes/RegisterClientModal';
 import ContainerClient from '../components/ui/clientes/ContainerClient';
 import ReusableModal from '../components/modals/ReusableModal';
+import SuccessMessage from '../components/ui/SuccessMessage'; // Importa el componente de mensaje de éxito
 
 const ClientsPage = () => {
   const { clients, fetchClients, deleteClient } = useClients();
@@ -14,6 +15,11 @@ const ClientsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [clientsPerPage, setClientsPerPage] = useState(10);
   const [isDeletedModalOpen, setIsDeletedModalOpen] = useState(false);
+  const [clientToEdit, setClientToEdit] = useState(null);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('success');
+  const [isMessageVisible, setIsMessageVisible] = useState(false);
+  const messageRef = useRef(null); // Crear ref para SuccessMessage
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,21 +28,37 @@ const ClientsPage = () => {
 
   const handleRegisterSuccess = () => {
     fetchClients();
+    setMessage('Propietario registrado con éxito.');
+    setMessageType('success');
+    setIsMessageVisible(true);
+    setTimeout(() => {
+      setIsMessageVisible(false);
+    }, 3000); // Oculta el mensaje después de 3 segundos
   };
 
-  const openModal = () => {
+  const openModal = (client = null) => {
+    setClientToEdit(client);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
+    setClientToEdit(null);
     setIsModalOpen(false);
   };
 
-  const openDeletedModal = () => {
-    setIsDeletedModalOpen(true);
-    setTimeout(() => {
-      setIsDeletedModalOpen(false);
-    }, 3000);
+  const handleDeleteClient = async (id) => {
+    try {
+      await deleteClient(id);
+      fetchClients();
+      setMessage('Propietario eliminado exitosamente.');
+      setMessageType('error');
+      setIsMessageVisible(true);
+      setTimeout(() => {
+        setIsMessageVisible(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error eliminando propietario:', error);
+    }
   };
 
   const toggleDropdown = (id) => {
@@ -70,11 +92,6 @@ const ClientsPage = () => {
   const paginateNext = () => setCurrentPage(currentPage + 1);
   const paginatePrev = () => setCurrentPage(currentPage - 1);
 
-  const handleDeleteClient = (id) => {
-    deleteClient(id);
-    openDeletedModal();
-  };
-
   const handleViewProfile = (id) => {
     navigate(`/veterinario/clients/${id}`);
   };
@@ -84,7 +101,7 @@ const ClientsPage = () => {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Lista de Propietarios</h1>
         <button
-          onClick={openModal}
+          onClick={() => openModal()}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center"
         >
           <FaPlus className="mr-2" /> Registrar Propietario
@@ -230,6 +247,13 @@ const ClientsPage = () => {
                                 Ver Perfil
                               </li>
                               <li
+                                onClick={() => openModal(client)}
+                                className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                              >
+                                <FaEdit className="mr-2" />
+                                Editar
+                              </li>
+                              <li
                                 onClick={() => {
                                   handleDeleteClient(client.client_id);
                                 }}
@@ -254,6 +278,13 @@ const ClientsPage = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         onRegisterSuccess={handleRegisterSuccess}
+        client={clientToEdit}
+      />
+      <SuccessMessage
+        ref={messageRef}
+        message={message}
+        isVisible={isMessageVisible}
+        type={messageType}
       />
       <ReusableModal
         isOpen={isDeletedModalOpen}

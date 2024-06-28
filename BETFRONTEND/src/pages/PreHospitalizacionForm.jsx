@@ -1,101 +1,196 @@
 // src/pages/PreHospitalizacionForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHospitalizacion } from '../context/HospitalizacionContext';
+import { useClients } from '../context/ClientsContext';
 
 const PreHospitalizacionForm = ({ onClose, onRegisterSuccess, selectedPatientId }) => {
-  const [admissionDate, setAdmissionDate] = useState('');
-  const [estimatedDays, setEstimatedDays] = useState('');
-  const [patientType, setPatientType] = useState('');
-  const [hospitalizationType, setHospitalizationType] = useState('');
-  const [prognosis, setPrognosis] = useState('');
-  const [belongings, setBelongings] = useState('');
-  const [observations, setObservations] = useState('');
-  const [diet, setDiet] = useState('');
-  const [chargeService, setChargeService] = useState(false);
+  const initialFormData = {
+    patient_id: selectedPatientId || '',
+    client_id: '',
+    admission_date: '',
+    estimated_days: '',
+    patient_type: '',
+    hospitalization_type: '',
+    prognosis: '',
+    belongings: '',
+    observations: '',
+    diet: '',
+    charge_service: false,
+  };
 
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState(initialFormData);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredClients, setFilteredClients] = useState([]);
+  const [clientsLoaded, setClientsLoaded] = useState(false);
+
   const { addHospitalization } = useHospitalizacion();
+  const { clients, fetchClients } = useClients();
+  const navigate = useNavigate();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!selectedPatientId) {
-      alert('No se ha seleccionado un paciente.');
-      return;
+  useEffect(() => {
+    fetchClients().then(() => setClientsLoaded(true));
+  }, [fetchClients]);
+
+  useEffect(() => {
+    if (clientsLoaded && selectedPatientId) {
+      const selectedClient = clients.find(client =>
+        client.pets.some(pet => pet.id === selectedPatientId)
+      );
+      const selectedPet = selectedClient ? selectedClient.pets.find(pet => pet.id === selectedPatientId) : null;
+      const searchTerm = selectedPet
+        ? `${selectedPet.name} - ${selectedClient.client_name} (${selectedClient.cedula})`
+        : '';
+
+      setFormData({
+        ...formData,
+        patient_id: selectedPatientId,
+        client_id: selectedClient.client_id,
+      });
+      setSearchTerm(searchTerm);
     }
-    const data = {
-      patient_id: selectedPatientId,
-      admission_date: admissionDate,
-      estimated_days: parseInt(estimatedDays, 10),
-      patient_type: patientType,
-      hospitalization_type: hospitalizationType,
-      prognosis,
-      belongings,
-      observations,
-      diet,
-      charge_service: chargeService,
-    };
-    await addHospitalization(data); // Almacena los datos en el contexto
-    onRegisterSuccess(); // Llama a la función de éxito
-    onClose(); // Cierra el modal
-    navigate('/veterinario/hospitalizations'); // Redirige a la página de hospitalizaciones
+  }, [clientsLoaded, selectedPatientId, clients]);
+
+  useEffect(() => {
+    if (searchTerm && !selectedPatientId) {
+      const filtered = clients.flatMap(client => {
+        return client.pets.map(pet => ({
+          ...pet,
+          clientId: client.client_id,
+          clientName: client.client_name,
+          clientCedula: client.cedula,
+        }));
+      }).filter(pet =>
+        `${pet.name} ${pet.clientName} ${pet.clientCedula}`.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredClients(filtered);
+    } else {
+      setFilteredClients([]);
+    }
+  }, [searchTerm, clients, selectedPatientId]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formattedData = {
+        ...formData,
+        admission_date: new Date(formData.admission_date).toISOString(),
+        estimated_days: parseInt(formData.estimated_days, 10)
+      };
+
+      await addHospitalization(formattedData);
+      onRegisterSuccess();
+      setFormData(initialFormData);
+      setSearchTerm('');
+      setFilteredClients([]);
+      onClose();
+      navigate('/veterinario/hospitalization'); 
+    } catch (error) {
+      console.error('Error al registrar la hospitalización:', error.response.data);
+    }
+  };
+
+  const handleSelectPatient = (patient) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      patient_id: patient.id,
+      client_id: patient.clientId,
+    }));
+    setSearchTerm(`${patient.name} - ${patient.clientName} (${patient.clientCedula})`);
+    setFilteredClients([]);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
-        <input 
-          type="datetime-local" 
-          className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={admissionDate}
-          onChange={(e) => setAdmissionDate(e.target.value)}
-          required
+      <div className="relative mb-4">
+        <label className="block text-gray-700">Paciente</label>
+        <input
+          type="text"
+          name="searchTerm"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border border-gray-300 rounded px-4 py-2 w-full"
+          readOnly={!!selectedPatientId}
         />
+        {searchTerm && !selectedPatientId && (
+          <div className="absolute z-10 bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto w-full">
+            {filteredClients.map(pet => (
+              <div
+                key={pet.id}
+                className="p-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => handleSelectPatient(pet)}
+              >
+                {`${pet.name} - ${pet.clientName || 'Nombre no disponible'} (${pet.clientCedula})`}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
+          <input 
+            type="date" 
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            name="admission_date"
+            value={formData.admission_date}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Días (estimados) a Hospitalizar</label>
+          <input 
+            type="number" 
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            name="estimated_days"
+            value={formData.estimated_days}
+            onChange={handleChange}
+            required
+          />
+        </div>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Días (estimados) a Hospitalizar</label>
-        <input 
-          type="number" 
-          className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={estimatedDays}
-          onChange={(e) => setEstimatedDays(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Tipo Paciente</label>
+        <label className="block text-sm font-medium text-gray-700">Tipo de Patología</label>
         <div className="mt-2 space-y-2">
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="patientType" 
+              name="patient_type" 
               className="form-radio" 
               value="Infeccioso" 
-              checked={patientType === 'Infeccioso'}
-              onChange={() => setPatientType('Infeccioso')}
+              checked={formData.patient_type === 'Infeccioso'}
+              onChange={handleChange}
             />
             <span className="ml-2">Infeccioso</span>
           </label>
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="patientType" 
+              name="patient_type" 
               className="form-radio" 
               value="No Infeccioso" 
-              checked={patientType === 'No Infeccioso'}
-              onChange={() => setPatientType('No Infeccioso')}
+              checked={formData.patient_type === 'No Infeccioso'}
+              onChange={handleChange}
             />
             <span className="ml-2">No Infeccioso</span>
           </label>
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="patientType" 
+              name="patient_type" 
               className="form-radio" 
               value="Post Quirúrgico" 
-              checked={patientType === 'Post Quirúrgico'}
-              onChange={() => setPatientType('Post Quirúrgico')}
+              checked={formData.patient_type === 'Post Quirúrgico'}
+              onChange={handleChange}
             />
             <span className="ml-2">Post Quirúrgico</span>
           </label>
@@ -107,22 +202,22 @@ const PreHospitalizacionForm = ({ onClose, onRegisterSuccess, selectedPatientId 
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="hospitalizationType" 
+              name="hospitalization_type" 
               className="form-radio" 
               value="Cuidados Intensivos" 
-              checked={hospitalizationType === 'Cuidados Intensivos'}
-              onChange={() => setHospitalizationType('Cuidados Intensivos')}
+              checked={formData.hospitalization_type === 'Cuidados Intensivos'}
+              onChange={handleChange}
             />
             <span className="ml-2">Cuidados Intensivos</span>
           </label>
           <label className="inline-flex items-center">
             <input 
               type="radio" 
-              name="hospitalizationType" 
+              name="hospitalization_type" 
               className="form-radio" 
               value="Normal" 
-              checked={hospitalizationType === 'Normal'}
-              onChange={() => setHospitalizationType('Normal')}
+              checked={formData.hospitalization_type === 'Normal'}
+              onChange={handleChange}
             />
             <span className="ml-2">Normal</span>
           </label>
@@ -131,33 +226,37 @@ const PreHospitalizacionForm = ({ onClose, onRegisterSuccess, selectedPatientId 
       <div>
         <label className="block text-sm font-medium text-gray-700">Pronóstico</label>
         <textarea 
+          name="prognosis"
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={prognosis}
-          onChange={(e) => setPrognosis(e.target.value)}
+          value={formData.prognosis}
+          onChange={handleChange}
         ></textarea>
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">Pertenencias</label>
         <textarea 
+          name="belongings"
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={belongings}
-          onChange={(e) => setBelongings(e.target.value)}
+          value={formData.belongings}
+          onChange={handleChange}
         ></textarea>
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">Observaciones</label>
         <textarea 
+          name="observations"
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={observations}
-          onChange={(e) => setObservations(e.target.value)}
+          value={formData.observations}
+          onChange={handleChange}
         ></textarea>
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">Dieta del paciente</label>
         <textarea 
+          name="diet"
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          value={diet}
-          onChange={(e) => setDiet(e.target.value)}
+          value={formData.diet}
+          onChange={handleChange}
         ></textarea>
       </div>
       <div>
@@ -165,25 +264,13 @@ const PreHospitalizacionForm = ({ onClose, onRegisterSuccess, selectedPatientId 
         <div className="mt-2 space-y-2">
           <label className="inline-flex items-center">
             <input 
-              type="radio" 
-              name="chargeService" 
-              className="form-radio" 
-              value={true} 
-              checked={chargeService === true}
-              onChange={() => setChargeService(true)}
+              type="checkbox" 
+              name="charge_service"
+              className="form-checkbox" 
+              checked={formData.charge_service}
+              onChange={handleChange}
             />
             <span className="ml-2">Sí</span>
-          </label>
-          <label className="inline-flex items-center">
-            <input 
-              type="radio" 
-              name="chargeService" 
-              className="form-radio" 
-              value={false} 
-              checked={chargeService === false}
-              onChange={() => setChargeService(false)}
-            />
-            <span className="ml-2">No</span>
           </label>
         </div>
       </div>

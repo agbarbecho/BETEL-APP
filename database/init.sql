@@ -54,7 +54,7 @@ CREATE TABLE hospitalizations (
     patient_type VARCHAR(50),                                                -- Tipo de paciente (Infeccioso, No Infeccioso, Post Quirúrgico)
     hospitalization_type VARCHAR(50),                                        -- Tipo de hospitalización (Cuidados Intensivos, Normal)
     prognosis TEXT,                                                          -- Pronóstico
-    belongings TEXT,                                                         -- Pertenencias
+    belongings TEXT,                                    a                     -- Pertenencias
     observations TEXT,                                                       -- Observaciones
     diet TEXT,                                                               -- Dieta del paciente
     charge_service BOOLEAN,                                                  -- ¿Incluir cobro del servicio?
@@ -66,6 +66,7 @@ CREATE TABLE hospitalizations (
 CREATE TABLE hospedaje (
     id SERIAL PRIMARY KEY,
     patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+    client_id INTEGER REFERENCES clients(id) ON DELETE CASCADE;
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     cost DECIMAL(10, 2) NOT NULL,
