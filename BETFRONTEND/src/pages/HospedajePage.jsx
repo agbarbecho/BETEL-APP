@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHospedaje } from '../context/HospedajeContext';
 import { useClients } from '../context/ClientsContext';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import SearchModal from '../components/modals/SearchModal';
+import { useNavigate } from 'react-router-dom';
 
 const HospedajePage = () => {
   const { hospedajes, fetchHospedajes } = useHospedaje();
@@ -10,9 +10,7 @@ const HospedajePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [hospedajesPerPage, setHospedajesPerPage] = useState(10);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
-  const [selectedPet, setSelectedPet] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchHospedajes();
@@ -43,12 +41,7 @@ const HospedajePage = () => {
   const paginatePrev = () => setCurrentPage(currentPage - 1);
 
   const handleAddHospedaje = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleSelectClientAndPet = (client, pet) => {
-    setSelectedClient(client);
-    setSelectedPet(pet);
+    navigate('/hospedaje/registro'); // Navega a la página de registro de hospedaje
   };
 
   return (
@@ -159,16 +152,16 @@ const HospedajePage = () => {
           </table>
         </div>
       </div>
-      <SearchModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSelect={handleSelectClientAndPet}
-      />
     </div>
   );
 };
 
 export default HospedajePage;
+
+
+
+
+
 
 
 
