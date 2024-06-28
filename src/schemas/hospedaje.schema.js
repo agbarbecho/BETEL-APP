@@ -7,6 +7,11 @@ export const createHospedajeSchema = z.object({
       required_error: "El ID del paciente es requerido",
       invalid_type_error: "El ID del paciente debe ser un número",
     }),
+  client_id: z
+    .number({
+      required_error: "El ID del cliente es requerido",
+      invalid_type_error: "El ID del cliente debe ser un número",
+    }),
   start_date: z
     .string({
       required_error: "La fecha de inicio es requerida",
@@ -45,6 +50,11 @@ export const updateHospedajeSchema = z.object({
     .number({
       required_error: "El ID del paciente es requerido",
       invalid_type_error: "El ID del paciente debe ser un número",
+    }),
+  client_id: z
+    .number({
+      required_error: "El ID del cliente es requerido",
+      invalid_type_error: "El ID del cliente debe ser un número",
     }),
   start_date: z
     .string({
