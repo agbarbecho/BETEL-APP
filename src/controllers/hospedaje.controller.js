@@ -5,7 +5,16 @@ import { createHospedajeSchema, updateHospedajeSchema } from "../schemas/hospeda
 export const getAllHospedajes = async (req, res, next) => {
   try {
     const result = await pool.query(`
-      SELECT h.id, h.patient_id, p.name as patient_name, h.client_id, c.full_name as client_name, h.start_date, h.end_date, h.cost, h.notes
+      SELECT 
+        h.id, 
+        h.patient_id, 
+        p.name as patient_name, 
+        h.client_id, 
+        c.full_name as client_name, 
+        h.start_date, 
+        h.end_date, 
+        h.cost, 
+        h.notes
       FROM hospedaje h
       LEFT JOIN patients p ON h.patient_id = p.id
       LEFT JOIN clients c ON h.client_id = c.id
@@ -21,7 +30,16 @@ export const getHospedaje = async (req, res, next) => {
   try {
     const { hospedajeId } = req.params;
     const result = await pool.query(`
-      SELECT h.id, h.patient_id, p.name as patient_name, h.client_id, c.full_name as client_name, h.start_date, h.end_date, h.cost, h.notes
+      SELECT 
+        h.id, 
+        h.patient_id, 
+        p.name as patient_name, 
+        h.client_id, 
+        c.full_name as client_name, 
+        h.start_date, 
+        h.end_date, 
+        h.cost, 
+        h.notes
       FROM hospedaje h
       LEFT JOIN patients p ON h.patient_id = p.id
       LEFT JOIN clients c ON h.client_id = c.id
@@ -85,4 +103,3 @@ export const deleteHospedaje = async (req, res, next) => {
     next(error);
   }
 };
-  

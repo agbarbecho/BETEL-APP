@@ -27,6 +27,7 @@ const PetsForm = ({ onClose, onRegisterSuccess, clientId }) => {
       color,
       size: talla,
       reproductive_status: estadoReproductivo,
+      gender: genero, // Incluyendo género en el objeto
       client_id: parseInt(clientId, 10),
     };
 

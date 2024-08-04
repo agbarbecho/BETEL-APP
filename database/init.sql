@@ -36,6 +36,7 @@ CREATE TABLE patients (
     name VARCHAR(255) NOT NULL,
     breed VARCHAR(255) NOT NULL,
     species VARCHAR(255) NOT NULL,
+    gender VARCHAR(255);
     weight DECIMAL(5, 2),
     birth_date DATE, -- Nueva columna para la fecha de nacimiento
     color VARCHAR(255),
