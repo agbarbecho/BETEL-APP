@@ -246,18 +246,7 @@ const RegisterHospitalizationModal = ({ isOpen, onClose, onRegisterSuccess, hosp
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="flex items-center">
-              <label className="block text-gray-700 mr-2">¿Incluir cobro del servicio?</label>
-              <input
-                type="checkbox"
-                name="charge_service"
-                checked={formData.charge_service}
-                onChange={handleChange}
-                className="mr-2"
-              />
-            </div>
-          </div>
+          
           <div className="flex justify-end">
             <button
               type="button"
