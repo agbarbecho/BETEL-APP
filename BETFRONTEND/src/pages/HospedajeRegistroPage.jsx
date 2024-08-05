@@ -33,10 +33,14 @@ const HospedajeRegistroPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formattedStartDate = new Date(startDate).toISOString().split('T')[0];
+    const formattedEndDate = new Date(endDate).toISOString().split('T')[0];
+
     const hospedaje = {
       patient_id: selectedPet,
-      start_date: startDate,
-      end_date: endDate,
+      start_date: formattedStartDate,
+      end_date: formattedEndDate,
       notes: notes,
     };
 

@@ -1,7 +1,7 @@
 // src/api/hospedaje.api.js
 import axios from './axios';
 
-export const getAllHospedajeRequest = () => axios.get('/veterinario/hospedaje');
+export const getAllHospedajesRequest = () => axios.get('/veterinario/hospedaje');
 
 export const getHospedajeRequest = (id) => axios.get(`/veterinario/hospedaje/${id}`);
 

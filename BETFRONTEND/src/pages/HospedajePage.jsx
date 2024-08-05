@@ -4,6 +4,7 @@ import { useClients } from '../context/ClientsContext';
 import { usePatients } from '../context/PatientContext';
 import RegisterHospedajeModal from '../components/modals/RegisterHospedajeModal';
 import { FaPlus } from 'react-icons/fa';
+import { format, parseISO } from 'date-fns';
 
 const HospedajePage = () => {
   const { hospedajes, fetchHospedajes, deleteHospedaje } = useHospedaje();
@@ -85,8 +86,12 @@ const HospedajePage = () => {
                 <td className="py-2 px-4 border-b border-gray-200">{hospedaje.id}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{hospedaje.patient_name}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{hospedaje.client_name}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{new Date(hospedaje.start_date).toLocaleDateString()}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{new Date(hospedaje.end_date).toLocaleDateString()}</td>
+                <td className="py-2 px-4 border-b border-gray-200">
+                  {format(parseISO(hospedaje.start_date), 'dd/MM/yyyy')}
+                </td>
+                <td className="py-2 px-4 border-b border-gray-200">
+                  {format(parseISO(hospedaje.end_date), 'dd/MM/yyyy')}
+                </td>
                 <td className="py-2 px-4 border-b border-gray-200">{hospedaje.notes}</td>
                 <td className="py-2 px-4 border-b border-gray-200">
                   <button
@@ -118,6 +123,7 @@ const HospedajePage = () => {
 };
 
 export default HospedajePage;
+
 
 
 
