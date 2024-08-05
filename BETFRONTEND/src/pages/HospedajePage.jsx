@@ -3,7 +3,7 @@ import { useHospedaje } from '../context/HospedajeContext';
 import { useClients } from '../context/ClientsContext';
 import { usePatients } from '../context/PatientContext';
 import RegisterHospedajeModal from '../components/modals/RegisterHospedajeModal';
-import { FaPlus, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaPlus, FaChevronLeft, FaChevronRight, FaEllipsisV, FaUser, FaEdit } from 'react-icons/fa';
 import { format, parseISO } from 'date-fns';
 
 const HospedajePage = () => {
@@ -16,6 +16,7 @@ const HospedajePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [hospedajesPerPage, setHospedajesPerPage] = useState(10);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(null);
 
   useEffect(() => {
     fetchClients();
@@ -82,6 +83,14 @@ const HospedajePage = () => {
 
   const paginateNext = () => setCurrentPage(currentPage + 1);
   const paginatePrev = () => setCurrentPage(currentPage - 1);
+
+  const toggleDropdown = (id) => {
+    if (isDropdownOpen === id) {
+      setIsDropdownOpen(null);
+    } else {
+      setIsDropdownOpen(id);
+    }
+  };
 
   return (
     <div className="w-full p-6 bg-gray-50 min-h-screen">
@@ -180,18 +189,41 @@ const HospedajePage = () => {
                     {hospedaje.notes}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <button
-                      onClick={() => handleEditHospedaje(hospedaje)}
-                      className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-700 mr-2"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDeleteHospedaje(hospedaje.id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700"
-                    >
-                      Eliminar
-                    </button>
+                    <div className="relative">
+                      <button
+                        onClick={() => toggleDropdown(hospedaje.id)}
+                        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 flex items-center"
+                      >
+                        <FaEllipsisV />
+                      </button>
+                      {isDropdownOpen === hospedaje.id && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+                          <ul>
+                            <li
+                              className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => console.log('Ver Perfil')}
+                            >
+                              <FaUser className="mr-2" />
+                              Ver Perfil
+                            </li>
+                            <li
+                              onClick={() => handleEditHospedaje(hospedaje)}
+                              className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                            >
+                              <FaEdit className="mr-2" />
+                              Editar
+                            </li>
+                            <li
+                              onClick={() => handleDeleteHospedaje(hospedaje.id)}
+                              className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                            >
+                              <FaEdit className="mr-2" />
+                              Eliminar
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
