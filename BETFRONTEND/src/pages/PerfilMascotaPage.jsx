@@ -6,14 +6,18 @@ const PerfilMascotaPage = () => {
   const { id } = useParams(); // `id` es el `petId`
   const navigate = useNavigate();
   const [pet, setPet] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPet = async () => {
       try {
         const response = await getPatientRequest(id);
         setPet(response.data);
-      } catch (error) {
-        console.error('Error obteniendo la mascota:', error);
+      } catch (err) {
+        setError('Error obteniendo la mascota');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -24,8 +28,8 @@ const PerfilMascotaPage = () => {
     try {
       await deletePatientRequest(id);
       navigate('/veterinario/patients'); // Redirige a la lista de pacientes después de eliminar
-    } catch (error) {
-      console.error('Error eliminando la mascota:', error);
+    } catch (err) {
+      setError('Error eliminando la mascota');
     }
   };
 
@@ -38,8 +42,12 @@ const PerfilMascotaPage = () => {
     return new Date(dateString).toLocaleDateString('es-ES', options);
   };
 
-  if (!pet) {
+  if (loading) {
     return <div>Cargando...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   return (
@@ -89,4 +97,3 @@ const PerfilMascotaPage = () => {
 };
 
 export default PerfilMascotaPage;
-

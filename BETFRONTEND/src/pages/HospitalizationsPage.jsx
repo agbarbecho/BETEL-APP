@@ -52,6 +52,7 @@ const HospitalizationsPage = () => {
   const handleDischarge = async (id) => {
     try {
       await updateHospitalizationStatus(id, false);
+      fetchHospitalizations();
     } catch (error) {
       console.error("Error al actualizar el estado de hospitalización", error);
     }
@@ -60,6 +61,7 @@ const HospitalizationsPage = () => {
   const handleReHospitalize = async (id) => {
     try {
       await updateHospitalizationStatus(id, true);
+      fetchHospitalizations();
     } catch (error) {
       console.error("Error al actualizar el estado de hospitalización", error);
     }
