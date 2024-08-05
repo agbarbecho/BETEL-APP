@@ -45,8 +45,8 @@ const HospitalizationsPage = () => {
   const paginateNext = () => setCurrentPage(currentPage + 1);
   const paginatePrev = () => setCurrentPage(currentPage - 1);
 
-  const handleViewDetails = (id) => {
-    navigate(`/veterinario/patients/${id}`);
+  const handleViewDetails = (patientId) => {
+    navigate(`/veterinario/patients/${patientId}`);
   };
 
   const handleDischarge = async (id) => {
@@ -216,7 +216,7 @@ const HospitalizationsPage = () => {
                           <ul>
                             <li
                               className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
-                              onClick={() => handleViewDetails(hospitalization.id)}
+                              onClick={() => handleViewDetails(hospitalization.patient_id)} // Asegúrate de que `patient_id` esté disponible
                             >
                               <FaUser className="mr-2" />
                               Ver Perfil
