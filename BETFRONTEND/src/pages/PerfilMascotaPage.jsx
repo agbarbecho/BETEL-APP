@@ -16,9 +16,12 @@ const PerfilMascotaPage = () => {
   useEffect(() => {
     const fetchPet = async () => {
       try {
+        console.log('Fetching pet with ID:', id); // Debug
         const response = await getPatientRequest(id);
+        console.log('Pet data received:', response.data); // Debug
         setPet(response.data);
       } catch (err) {
+        console.error('Error obteniendo la mascota:', err); // Debug
         setError('Error obteniendo la mascota');
       } finally {
         setLoading(false);
@@ -114,3 +117,4 @@ const PerfilMascotaPage = () => {
 };
 
 export default PerfilMascotaPage;
+
