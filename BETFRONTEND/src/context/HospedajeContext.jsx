@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { 
-  getAllHospedajesRequest, 
+  getAllHospedajeRequest, 
   getHospedajeRequest,
   createHospedajeRequest, 
   updateHospedajeRequest, 
@@ -17,7 +17,7 @@ export const HospedajeProvider = ({ children }) => {
 
   const fetchHospedajes = useCallback(async () => {
     try {
-      const response = await getAllHospedajesRequest();
+      const response = await getAllHospedajeRequest();
       setHospedajes(response.data);
     } catch (error) {
       console.error('Error fetching hospedajes:', error);
@@ -76,4 +76,3 @@ export const HospedajeProvider = ({ children }) => {
     </HospedajeContext.Provider>
   );
 };
-
