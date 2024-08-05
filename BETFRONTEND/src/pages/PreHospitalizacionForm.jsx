@@ -1,4 +1,3 @@
-// src/pages/PreHospitalizacionForm.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHospitalizacion } from '../context/HospitalizacionContext';
@@ -16,7 +15,6 @@ const PreHospitalizacionForm = ({ onClose, onRegisterSuccess, selectedPatientId 
     belongings: '',
     observations: '',
     diet: '',
-    charge_service: false,
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -259,21 +257,6 @@ const PreHospitalizacionForm = ({ onClose, onRegisterSuccess, selectedPatientId 
           onChange={handleChange}
         ></textarea>
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700">¿Incluir cobro del servicio?</label>
-        <div className="mt-2 space-y-2">
-          <label className="inline-flex items-center">
-            <input 
-              type="checkbox" 
-              name="charge_service"
-              className="form-checkbox" 
-              checked={formData.charge_service}
-              onChange={handleChange}
-            />
-            <span className="ml-2">Sí</span>
-          </label>
-        </div>
-      </div>
       <div className="flex justify-end space-x-4 mt-4">
         <button type="button" onClick={onClose} className="px-4 py-2 rounded-full border border-gray-300 bg-red-500 text-white">Cerrar</button>
         <button type="submit" className="bg-cyan-500 text-white px-4 py-2 rounded-full">Guardar</button>
@@ -283,3 +266,4 @@ const PreHospitalizacionForm = ({ onClose, onRegisterSuccess, selectedPatientId 
 };
 
 export default PreHospitalizacionForm;
+
