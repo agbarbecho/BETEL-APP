@@ -42,8 +42,8 @@ const RegisterHospedajeModal = ({ isOpen, onClose, onRegisterSuccess, hospedaje 
         setFormData({
           patient_id: hospedaje.patient_id,
           client_id: hospedaje.client_id,
-          start_date: new Date(hospedaje.start_date).toISOString().slice(0, -1),
-          end_date: new Date(hospedaje.end_date).toISOString().slice(0, -1),
+          start_date: new Date(hospedaje.start_date).toISOString().split('T')[0],
+          end_date: new Date(hospedaje.end_date).toISOString().split('T')[0],
           notes: hospedaje.notes,
         });
         setSearchClientTerm(clientSearchTerm);
@@ -91,8 +91,8 @@ const RegisterHospedajeModal = ({ isOpen, onClose, onRegisterSuccess, hospedaje 
     try {
       const formattedData = {
         ...formData,
-        start_date: new Date(formData.start_date).toISOString(),
-        end_date: new Date(formData.end_date).toISOString(),
+        start_date: new Date(formData.start_date).toISOString().split('T')[0],
+        end_date: new Date(formData.end_date).toISOString().split('T')[0],
       };
 
       if (hospedaje) {
