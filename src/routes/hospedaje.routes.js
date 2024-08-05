@@ -23,3 +23,4 @@ router.put("/hospedaje/:hospedajeId", isAuth, isAdminOrVeterinarian, validateSch
 router.delete("/hospedaje/:hospedajeId", isAuth, isAdminOrVeterinarian, deleteHospedaje);
 
 export default router;
+
