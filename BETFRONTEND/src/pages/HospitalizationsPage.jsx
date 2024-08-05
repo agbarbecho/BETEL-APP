@@ -46,6 +46,7 @@ const HospitalizationsPage = () => {
   const paginatePrev = () => setCurrentPage(currentPage - 1);
 
   const handleViewDetails = (patientId) => {
+    console.log('Navigating to patient profile with ID:', patientId); // Debug
     navigate(`/veterinario/patients/${patientId}`);
   };
 
@@ -267,3 +268,4 @@ const HospitalizationsPage = () => {
 };
 
 export default HospitalizationsPage;
+
