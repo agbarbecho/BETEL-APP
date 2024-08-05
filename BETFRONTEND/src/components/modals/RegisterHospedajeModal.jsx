@@ -42,8 +42,8 @@ const RegisterHospedajeModal = ({ isOpen, onClose, onRegisterSuccess, hospedaje 
         setFormData({
           patient_id: hospedaje.patient_id,
           client_id: hospedaje.client_id,
-          start_date: new Date(hospedaje.start_date).toISOString().split('T')[0],
-          end_date: new Date(hospedaje.end_date).toISOString().split('T')[0],
+          start_date: hospedaje.start_date.slice(0, 10),
+          end_date: hospedaje.end_date.slice(0, 10),
           notes: hospedaje.notes,
         });
         setSearchClientTerm(clientSearchTerm);
@@ -239,7 +239,6 @@ const RegisterHospedajeModal = ({ isOpen, onClose, onRegisterSuccess, hospedaje 
 };
 
 export default RegisterHospedajeModal;
-
 
 
 
