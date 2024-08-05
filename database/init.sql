@@ -70,7 +70,6 @@ CREATE TABLE hospedaje (
     client_id INTEGER REFERENCES clients(id) ON DELETE CASCADE;
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    cost DECIMAL(10, 2) NOT NULL,
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

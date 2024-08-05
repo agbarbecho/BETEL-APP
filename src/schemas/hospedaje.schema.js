@@ -32,12 +32,6 @@ export const createHospedajeSchema = z.object({
       path: ["end_date"],
     })
     .transform((val) => new Date(val)),
-  cost: z
-    .number({
-      required_error: "El costo es requerido",
-      invalid_type_error: "El costo debe ser un número",
-    })
-    .min(0),
   notes: z
     .string()
     .max(1000)
