@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { ClientsProvider } from './context/ClientsContext';
 import { UserProvider } from './context/UserContext';
@@ -48,6 +48,7 @@ const App = () => {
               <Route element={<PublicLayout />}>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/" element={<Navigate to="/login" />} /> {/* Redirección de raíz */}
               </Route>
 
               <Route element={<ProtectedLayout isAuth={isAuth} toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />}>
