@@ -47,18 +47,12 @@ const HospedajePage = () => {
   const handleDeleteHospedaje = async (id) => {
     const confirmed = window.confirm('¿Estás seguro de que deseas eliminar este registro de hospedaje?');
     if (confirmed) {
-      try {
-        await deleteHospedaje(id);
-        fetchHospedajes(); // Refrescar la lista después de eliminar
-      } catch (error) {
-        console.error('Error al eliminar el hospedaje:', error);
-      }
+      await deleteHospedaje(id);
     }
   };
 
   const handleRegisterSuccess = () => {
     fetchHospedajes();
-    setIsModalOpen(false); // Cerrar el modal después de registrar
   };
 
   return (
