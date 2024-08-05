@@ -48,6 +48,7 @@ const HospedajePage = () => {
     const confirmed = window.confirm('¿Estás seguro de que deseas eliminar este registro de hospedaje?');
     if (confirmed) {
       await deleteHospedaje(id);
+      fetchHospedajes();
     }
   };
 
