@@ -13,6 +13,7 @@ const HospedajePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedHospedaje, setSelectedHospedaje] = useState(null);
   const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchClients();
@@ -56,6 +57,17 @@ const HospedajePage = () => {
     fetchHospedajes();
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredData = data.filter((hospedaje) => {
+    return (
+      hospedaje.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      hospedaje.patient_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
@@ -66,6 +78,15 @@ const HospedajePage = () => {
         >
           <FaPlus className="mr-2" /> Registrar Hospedaje
         </button>
+      </div>
+      <div className="flex justify-end mb-4">
+        <input
+          type="text"
+          placeholder="Buscar por nombre de paciente o cliente"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="border border-gray-300 rounded px-4 py-2"
+        />
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
@@ -81,7 +102,7 @@ const HospedajePage = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((hospedaje) => (
+            {filteredData.map((hospedaje) => (
               <tr key={hospedaje.id}>
                 <td className="py-2 px-4 border-b border-gray-200">{hospedaje.id}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{hospedaje.patient_name}</td>
@@ -123,16 +144,3 @@ const HospedajePage = () => {
 };
 
 export default HospedajePage;
-
-
-
-
-
-
-
-
-
-
-
-
-
